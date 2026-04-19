@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>アプリ一覧</title>
+
+<style>
+body{
+  margin:0;
+  font-family:sans-serif;
+  background:linear-gradient(180deg,#0a1a2f,#123c5c);
+  color:white;
+}
+
+/* ヘッダー */
+.header{
+  padding:30px 20px;
+  text-align:center;
+}
+.header h1{
+  margin:0;
+  font-size:28px;
+}
+.header p{
+  margin-top:8px;
+  color:#ccc;
+}
+
+/* グリッド */
+.grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+  gap:16px;
+  padding:20px;
+}
+
+/* カード */
+.card{
+  background:rgba(255,255,255,0.08);
+  border-radius:20px;
+  padding:20px;
+  text-decoration:none;
+  color:white;
+  transition:0.2s;
+  backdrop-filter:blur(6px);
+}
+
+.card:hover{
+  transform:translateY(-5px);
+  background:rgba(255,255,255,0.15);
+}
+
+.card h2{
+  margin:0 0 10px;
+  font-size:20px;
+}
+
+.card p{
+  font-size:14px;
+  color:#ddd;
+}
+
+/* タグ */
+.tag{
+  display:inline-block;
+  font-size:12px;
+  padding:4px 10px;
+  border-radius:20px;
+  margin-top:10px;
+  background:#00c2ff;
+}
+
+/* フッター */
+.footer{
+  text-align:center;
+  padding:20px;
+  color:#aaa;
+  font-size:12px;
+}
+</style>
+</head>
+
+<body>
+
+<div class="header">
+  <h1>アプリ一覧</h1>
+  <p>作成したアプリのリンク集</p>
+</div>
+
+<div class="grid">
+
+  <!-- ポケモン / 遊戯王 -->
+  <a class="card" href="https://saronisi652closer-ship-it.github.io/my-app/">
+    <h2>趣味管理アプリ</h2>
+    <p>ポケモン / 遊戯王の管理アプリ</p>
+    <span class="tag">メイン</span>
+  </a>
+
+  <!-- ミトモン -->
+  <a class="card" href="https://saronisi652closer-ship-it.github.io/rinto-region/">
+    <h2>ミトモン</h2>
+    <p>リント地方 RPGプロトタイプ</p>
+    <span class="tag">ゲーム</span>
+  </a>
+
+  <!-- メモ帳 -->
+  <a class="card" href="https://saronisi652closer-ship-it.github.io/-/">
+    <h2>オフラインメモ</h2>
+    <p>ローカル保存メモアプリ</p>
+    <span class="tag">PWA</span>
+  </a>
+
+  <!-- マルチタスク -->
+  <a class="card" href="https://saronisi652closer-ship-it.github.io/Multitasking/">
+    <h2>マルチタスク</h2>
+    <p>タスク管理・作業分割ツール</p>
+    <span class="tag">便利ツール</span>
+  </a>
+
+  <!-- 在庫管理 -->
+  <a class="card" href="https://saronisi652closer-ship-it.github.io/shopping-list/">
+    <h2>在庫管理</h2>
+    <p>自動購入リスト付き在庫管理</p>
+    <span class="tag">生活</span>
+  </a>
+
+</div>
+
+<div class="footer">
+  © My Apps
+</div>
+
+</body>
+</html>
