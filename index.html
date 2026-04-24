@@ -1,207 +1,509 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>スマホアプリ風ホーム画面</title>
-
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>My Apps</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@600;800&family=Noto+Sans+JP:wght@400;500;700&display=swap" rel="stylesheet">
 <style>
-* { box-sizing: border-box; }
-
-body {
-  margin: 0;
-  font-family: Arial, "Hiragino Kaku Gothic ProN", Meiryo, sans-serif;
-  min-height: 100vh;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 24px 16px;
-  background:
-    radial-gradient(circle at top, rgba(114,180,255,0.28), transparent 30%),
-    linear-gradient(180deg, #08111d 0%, #16273d 100%);
-  color: #fff;
+:root {
+  --bg:       #0f1117;
+  --surface:  #181c26;
+  --surface2: #1f2436;
+  --border:   rgba(255,255,255,0.07);
+  --accent:   #f0c040;
+  --accent2:  #5eb8ff;
+  --text:     #e4e9f4;
+  --muted:    rgba(228,233,244,0.45);
+  --danger:   #ff6b6b;
+  --green:    #4cde8c;
+  --r:        16px;
 }
 
-.phone {
-  width: min(420px, 100%);
-  min-height: 820px;
-  border-radius: 36px;
+*{box-sizing:border-box;margin:0;padding:0}
+
+body {
+  font-family: 'Noto Sans JP', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  padding: 40px 20px 60px;
+  background-image:
+    radial-gradient(ellipse 60% 40% at 10% 0%, rgba(240,192,64,.07) 0%, transparent 60%),
+    radial-gradient(ellipse 50% 50% at 90% 100%, rgba(94,184,255,.06) 0%, transparent 55%);
+}
+
+body::before {
+  content:'';
+  position:fixed;
+  inset:0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.04'/%3E%3C/svg%3E");
+  background-size: 180px;
+  pointer-events:none;
+  z-index:0;
+  opacity:.6;
+}
+
+.wrap { max-width: 860px; margin: 0 auto; position: relative; z-index: 1; }
+
+/* Header */
+header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 36px;
+  animation: fadeUp .5s ease both;
+}
+.header-left h1 {
+  font-family: 'Syne', sans-serif;
+  font-size: clamp(32px, 6vw, 52px);
+  font-weight: 800;
+  letter-spacing: -2px;
+  line-height: 1;
+  background: linear-gradient(110deg, #fff 0%, var(--accent) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+.header-left .tagline {
+  font-size: 13px;
+  color: var(--muted);
+  margin-top: 6px;
+  letter-spacing: .5px;
+}
+.header-right {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 8px;
+}
+.date-badge {
+  font-size: 11px;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: var(--muted);
+  border: 1px solid var(--border);
+  padding: 5px 10px;
+  border-radius: 20px;
+}
+.status-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: .5px;
+  padding: 5px 12px;
+  border-radius: 20px;
+  transition: all .3s;
+}
+.status-pill.online  { background: rgba(76,222,140,.12); color: var(--green); border: 1px solid rgba(76,222,140,.3); }
+.status-pill.offline { background: rgba(255,107,107,.12); color: var(--danger); border: 1px solid rgba(255,107,107,.3); }
+.status-dot {
+  width: 7px; height: 7px; border-radius: 50%;
+  animation: pulse 2s infinite;
+}
+.online  .status-dot { background: var(--green); }
+.offline .status-dot { background: var(--danger); animation: none; }
+
+/* Divider */
+.divider {
+  height: 1px;
+  background: var(--border);
+  margin-bottom: 28px;
+  animation: fadeUp .4s .05s ease both;
+}
+
+/* Search */
+.search-wrap {
+  position: relative;
+  margin-bottom: 32px;
+  animation: fadeUp .4s .1s ease both;
+}
+.search-wrap svg {
+  position: absolute;
+  left: 16px; top: 50%;
+  transform: translateY(-50%);
+  opacity: .4;
+}
+#search {
+  width: 100%;
+  padding: 13px 16px 13px 46px;
+  border-radius: var(--r);
+  border: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--text);
+  font-size: 14px;
+  font-family: inherit;
+  outline: none;
+  transition: border .2s, background .2s;
+}
+#search:focus {
+  border-color: rgba(240,192,64,.35);
+  background: var(--surface2);
+}
+#search::placeholder { color: var(--muted); }
+
+/* Section title */
+.section-title {
+  font-size: 10px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 14px;
+  padding-left: 2px;
+}
+
+/* App grid */
+.app-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 12px;
+  margin-bottom: 40px;
+}
+
+.app-card {
+  display: flex;
+  align-items: center;
+  gap: 16px;
   padding: 16px;
-  background: #0d1625;
-  box-shadow: 0 30px 60px rgba(0,0,0,0.45);
-  border: 2px solid rgba(255,255,255,0.08);
+  border-radius: var(--r);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  text-decoration: none;
+  color: var(--text);
+  transition: background .2s, border-color .2s, transform .18s cubic-bezier(.34,1.4,.64,1);
+  animation: fadeUp .5s ease both;
   position: relative;
   overflow: hidden;
 }
+.app-card::before {
+  content:'';
+  position:absolute; inset:0;
+  background: linear-gradient(135deg, rgba(255,255,255,.03) 0%, transparent 60%);
+  pointer-events:none;
+}
+.app-card:hover {
+  background: var(--surface2);
+  border-color: rgba(240,192,64,.2);
+  transform: translateY(-2px);
+}
+.app-card:active { transform: scale(.97); }
 
-.wallpaper {
-  position: absolute;
-  inset: 0;
-  background:
-    radial-gradient(circle at 20% 20%, rgba(65,180,255,0.32), transparent 26%),
-    radial-gradient(circle at 80% 30%, rgba(104,255,182,0.22), transparent 22%),
-    radial-gradient(circle at 50% 80%, rgba(255,212,84,0.18), transparent 24%),
-    linear-gradient(180deg, #163056 0%, #1f4b73 50%, #0f2138 100%);
+.app-card:nth-child(1){animation-delay:.12s}
+.app-card:nth-child(2){animation-delay:.16s}
+.app-card:nth-child(3){animation-delay:.20s}
+.app-card:nth-child(4){animation-delay:.24s}
+.app-card:nth-child(5){animation-delay:.28s}
+.app-card:nth-child(6){animation-delay:.32s}
+.app-card:nth-child(7){animation-delay:.36s}
+
+.app-icon {
+  width: 52px; height: 52px;
+  border-radius: 14px;
+  flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+  font-family: 'Noto Sans JP', sans-serif;
+  font-size: 20px; font-weight: 700;
+  box-shadow: 0 4px 14px rgba(0,0,0,.3);
+  position: relative; overflow: hidden;
+}
+.app-icon::after {
+  content:''; position:absolute; inset:0;
+  background:linear-gradient(145deg, rgba(255,255,255,.18) 0%, transparent 55%);
+}
+.c1{background:linear-gradient(135deg,#3b9eff,#1255b0)}
+.c2{background:linear-gradient(135deg,#43e97b,#138a3f)}
+.c3{background:linear-gradient(135deg,#ffb347,#c84e00)}
+.c4{background:linear-gradient(135deg,#b06dff,#5e0fb0)}
+.c5{background:linear-gradient(135deg,#ff6b8a,#b01035)}
+.c6{background:linear-gradient(135deg,#54d2ff,#0272b0)}
+.c7{background:linear-gradient(135deg,#ffd448,#c07000)}
+
+.app-info { flex: 1; min-width: 0; }
+.app-name {
+  font-size: 14px; font-weight: 700;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.app-desc { font-size: 11px; color: var(--muted); margin-top: 3px; }
+.app-badge {
+  font-size: 9px; font-weight: 700;
+  letter-spacing: .8px; text-transform: uppercase;
+  padding: 3px 7px; border-radius: 6px;
+  background: rgba(76,222,140,.1); color: var(--green);
+  border: 1px solid rgba(76,222,140,.2); flex-shrink: 0;
 }
 
-.phone-inner {
-  position: relative;
-  z-index: 1;
+/* GitHub section */
+.github-section {
+  border-radius: var(--r);
+  border: 1px solid var(--border);
+  background: var(--surface);
+  padding: 20px;
+  display: flex; align-items: center; gap: 16px;
+  animation: fadeUp .5s .4s ease both;
+  position: relative; overflow: hidden;
 }
-
-.status {
-  display: flex;
-  justify-content: space-between;
-  padding-bottom: 10px;
-  font-weight: bold;
+.github-section::after {
+  content:''; position:absolute; inset:0;
+  background:linear-gradient(90deg, rgba(255,255,255,.02) 0%, transparent 60%);
+  pointer-events:none;
 }
-
-.hero h1 {
-  margin: 0;
-  font-size: 26px;
+.github-icon {
+  width: 48px; height: 48px;
+  border-radius: 14px; background: #24292e;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0; border: 1px solid rgba(255,255,255,.1);
 }
-
-.hero p {
-  font-size: 13px;
-  color: rgba(255,255,255,0.8);
+.github-info { flex: 1; }
+.github-info .name { font-size: 14px; font-weight: 700; }
+.github-info .desc { font-size: 11px; color: var(--muted); margin-top: 3px; }
+.github-right {
+  display: flex; flex-direction: column;
+  align-items: flex-end; gap: 6px;
 }
-
+.online-only-badge {
+  font-size: 9px; font-weight: 700;
+  letter-spacing: .8px; text-transform: uppercase;
+  padding: 3px 7px; border-radius: 6px;
+  background: rgba(94,184,255,.1); color: var(--accent2);
+  border: 1px solid rgba(94,184,255,.2);
+}
 .github-btn {
-  margin-top: 12px;
-  display: inline-block;
-  padding: 8px 14px;
-  border-radius: 20px;
-  background: #24292e;
-  color: #fff;
-  font-size: 13px;
-  text-decoration: none;
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 8px 16px; border-radius: 10px;
+  background: rgba(255,255,255,.07); color: var(--text);
+  border: 1px solid var(--border);
+  font-size: 12px; font-weight: 600;
+  font-family: inherit; text-decoration: none;
+  cursor: pointer; transition: background .2s, opacity .2s;
+}
+.github-btn:hover { background: rgba(255,255,255,.12); }
+.github-btn.disabled {
+  opacity: .3; cursor: not-allowed; pointer-events: none;
 }
 
-.search {
-  margin: 16px 0;
-  padding: 12px;
-  border-radius: 20px;
-  background: rgba(255,255,255,0.15);
+/* Offline banner */
+.offline-banner {
+  display: none;
+  align-items: center; gap: 10px;
+  padding: 12px 16px; border-radius: var(--r);
+  background: rgba(255,107,107,.08); border: 1px solid rgba(255,107,107,.2);
+  color: var(--danger); font-size: 12px;
+  margin-bottom: 24px; animation: fadeUp .3s ease both;
+}
+.offline-banner.show { display: flex; }
+
+#no-results {
+  display: none; text-align: center;
+  padding: 40px 20px; color: var(--muted); font-size: 14px;
 }
 
-.app-grid {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 16px;
+/* Animations */
+@keyframes fadeUp {
+  from { opacity:0; transform:translateY(16px); }
+  to   { opacity:1; transform:translateY(0); }
+}
+@keyframes pulse {
+  0%,100% { opacity:1; box-shadow: 0 0 0 0 rgba(76,222,140,.4); }
+  50%      { opacity:.7; box-shadow: 0 0 0 5px rgba(76,222,140,0); }
 }
 
-.app-icon-wrap {
-  text-align: center;
-  text-decoration: none;
-  color: white;
-}
-
-.icon {
-  width: 70px;
-  height: 70px;
-  border-radius: 18px;
-  margin: 0 auto 6px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-weight: bold;
-}
-
-.i1 { background: #4da6ff; }
-.i2 { background: #2ecc71; }
-.i3 { background: #ff8c42; }
-.i4 { background: #9b59b6; }
-.i5 { background: #ff5c7a; }
-
-.app-label {
-  font-size: 11px;
-}
-
-.widget {
-  margin-top: 20px;
-  padding: 14px;
-  border-radius: 20px;
-  background: rgba(255,255,255,0.1);
-}
-
-.widget-item {
-  display: flex;
-  justify-content: space-between;
-  padding: 6px 0;
+@media(max-width:480px){
+  body { padding: 24px 14px 50px; }
+  .app-grid { grid-template-columns: 1fr 1fr; }
+  .app-card { flex-direction: column; align-items: flex-start; gap: 10px; }
+  .app-badge { align-self: flex-end; }
+  .github-section { flex-wrap: wrap; }
+  .github-right { flex-direction: row; align-items: center; width: 100%; justify-content: space-between; }
 }
 </style>
 </head>
-
 <body>
+<div class="wrap">
 
-<div class="phone">
-<div class="wallpaper"></div>
+  <header>
+    <div class="header-left">
+      <h1>My Apps</h1>
+      <p class="tagline">アプリ一覧ランチャー</p>
+    </div>
+    <div class="header-right">
+      <div class="date-badge" id="dateLabel"></div>
+      <div class="status-pill online" id="statusPill">
+        <span class="status-dot"></span>
+        <span id="statusText">オンライン</span>
+      </div>
+    </div>
+  </header>
 
-<div class="phone-inner">
+  <div class="divider"></div>
 
-<div class="status">
-  <div>9:41</div>
-  <div>🔋79%</div>
+  <div class="offline-banner" id="offlineBanner">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/></svg>
+    オフラインです。アプリはキャッシュ済みのものが使用できます。GitHubリンクはご利用いただけません。
+  </div>
+
+  <div class="search-wrap">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round">
+      <circle cx="11" cy="11" r="6"/><line x1="16.5" y1="16.5" x2="22" y2="22"/>
+    </svg>
+    <input type="text" id="search" placeholder="アプリを検索する…" autocomplete="off"/>
+  </div>
+
+  <div class="section-title">アプリ一覧</div>
+  <div class="app-grid" id="appGrid">
+
+    <a class="app-card" href="https://saronise652closer-ship-it.github.io/my-app/" target="_blank" data-name="趣味管理">
+      <div class="app-icon c1">趣</div>
+      <div class="app-info">
+        <div class="app-name">趣味管理</div>
+        <div class="app-desc">趣味・コレクション管理</div>
+      </div>
+      <span class="app-badge">オフライン可</span>
+    </a>
+
+    <a class="app-card" href="https://saronise652closer-ship-it.github.io/rinto-region/" target="_blank" data-name="ミトモン">
+      <div class="app-icon c2">ミ</div>
+      <div class="app-info">
+        <div class="app-name">ミトモン</div>
+        <div class="app-desc">よく使うアプリ</div>
+      </div>
+      <span class="app-badge">オフライン可</span>
+    </a>
+
+    <a class="app-card" href="https://saronise652closer-ship-it.github.io/-/" target="_blank" data-name="メモ">
+      <div class="app-icon c3">メ</div>
+      <div class="app-info">
+        <div class="app-name">メモ</div>
+        <div class="app-desc">メモ帳アプリ</div>
+      </div>
+      <span class="app-badge">オフライン可</span>
+    </a>
+
+    <a class="app-card" href="https://saronise652closer-ship-it.github.io/Multitasking/" target="_blank" data-name="タスク">
+      <div class="app-icon c4">タ</div>
+      <div class="app-info">
+        <div class="app-name">タスク</div>
+        <div class="app-desc">マルチタスク管理</div>
+      </div>
+      <span class="app-badge">オフライン可</span>
+    </a>
+
+    <a class="app-card" href="https://saronise652closer-ship-it.github.io/shopping-list/" target="_blank" data-name="在庫管理">
+      <div class="app-icon c5">在</div>
+      <div class="app-info">
+        <div class="app-name">在庫管理</div>
+        <div class="app-desc">買い物・在庫チェック</div>
+      </div>
+      <span class="app-badge">オフライン可</span>
+    </a>
+
+    <a class="app-card" href="https://saronise652closer-ship-it.github.io/duplicate-photo-checker/" target="_blank" data-name="重複写真チェッカー">
+      <div class="app-icon c6">写</div>
+      <div class="app-info">
+        <div class="app-name">重複写真</div>
+        <div class="app-desc">重複画像を検出・整理</div>
+      </div>
+      <span class="app-badge">オフライン可</span>
+    </a>
+
+    <a class="app-card" href="https://saronise652closer-ship-it.github.io/Pal/" target="_blank" data-name="Pal">
+      <div class="app-icon c7">パ</div>
+      <div class="app-info">
+        <div class="app-name">Pal</div>
+        <div class="app-desc">コンパニオンアプリ</div>
+      </div>
+      <span class="app-badge">オフライン可</span>
+    </a>
+
+  </div>
+  <div id="no-results">「<span id="query-echo"></span>」に一致するアプリは見つかりませんでした</div>
+
+  <div class="section-title">外部リンク</div>
+  <div class="github-section">
+    <div class="github-icon">
+      <svg width="26" height="26" viewBox="0 0 24 24" fill="white">
+        <path d="M12 0C5.37 0 0 5.37 0 12c0 5.3 3.44 9.8 8.2 11.38.6.1.82-.26.82-.58v-2.18c-3.34.72-4.04-1.6-4.04-1.6-.54-1.38-1.33-1.74-1.33-1.74-1.09-.74.08-.73.08-.73 1.2.08 1.84 1.24 1.84 1.24 1.07 1.83 2.8 1.3 3.48 1 .11-.78.42-1.3.76-1.6-2.67-.3-5.47-1.33-5.47-5.93 0-1.31.47-2.38 1.24-3.22-.12-.3-.54-1.52.12-3.18 0 0 1.01-.32 3.3 1.23A11.5 11.5 0 0 1 12 5.8c1.02.005 2.05.14 3.01.4 2.28-1.55 3.29-1.23 3.29-1.23.66 1.66.24 2.88.12 3.18.77.84 1.24 1.91 1.24 3.22 0 4.61-2.81 5.63-5.49 5.92.43.37.82 1.1.82 2.22v3.29c0 .32.22.69.83.57C20.57 21.8 24 17.3 24 12c0-6.63-5.37-12-12-12z"/>
+      </svg>
+    </div>
+    <div class="github-info">
+      <div class="name">GitHub リポジトリ</div>
+      <div class="desc">saronise652closer-ship-it — ソースコード一覧</div>
+    </div>
+    <div class="github-right">
+      <span class="online-only-badge">オンライン専用</span>
+      <a id="githubBtn" class="github-btn" href="https://github.com/saronise652closer-ship-it" target="_blank">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/>
+          <polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/>
+        </svg>
+        開く
+      </a>
+    </div>
+  </div>
+
 </div>
 
-<div class="hero">
-  <h1>My Apps</h1>
-  <p>アプリ一覧ホーム</p>
+<script>
+/* Date */
+const d = new Date();
+const days = ['日','月','火','水','木','金','土'];
+document.getElementById('dateLabel').textContent =
+  `${d.getFullYear()}/${d.getMonth()+1}/${d.getDate()} (${days[d.getDay()]})`;
 
-  <!-- ★ GitHubリンク -->
-  <a class="github-btn" href="https://github.com/saronisi652closer-ship-it" target="_blank">
-    GitHubを見る
-  </a>
-</div>
+/* Online/Offline */
+const pill   = document.getElementById('statusPill');
+const txt    = document.getElementById('statusText');
+const banner = document.getElementById('offlineBanner');
+const ghBtn  = document.getElementById('githubBtn');
+const GHURL  = 'https://github.com/saronise652closer-ship-it';
 
-<div class="search">🔎 アプリ検索</div>
+function setOnline(online) {
+  pill.className = 'status-pill ' + (online ? 'online' : 'offline');
+  txt.textContent = online ? 'オンライン' : 'オフライン';
+  banner.classList.toggle('show', !online);
+  if (online) {
+    ghBtn.classList.remove('disabled');
+    ghBtn.href = GHURL;
+  } else {
+    ghBtn.classList.add('disabled');
+    ghBtn.removeAttribute('href');
+  }
+}
+setOnline(navigator.onLine);
+window.addEventListener('online',  () => setOnline(true));
+window.addEventListener('offline', () => setOnline(false));
 
-<div class="app-grid">
+/* Search */
+const input = document.getElementById('search');
+const cards = document.querySelectorAll('.app-card');
+const noRes = document.getElementById('no-results');
+const echo  = document.getElementById('query-echo');
 
-<a class="app-icon-wrap" href="https://saronisi652closer-ship-it.github.io/my-app/" target="_blank">
-  <div class="icon i1">趣</div>
-  <div class="app-label">趣味管理</div>
-</a>
+input.addEventListener('input', () => {
+  const q = input.value.trim().toLowerCase();
+  let n = 0;
+  cards.forEach(c => {
+    const show = !q || c.dataset.name.toLowerCase().includes(q);
+    c.style.display = show ? '' : 'none';
+    if (show) n++;
+  });
+  noRes.style.display = n ? 'none' : 'block';
+  echo.textContent = input.value.trim();
+});
 
-<a class="app-icon-wrap" href="https://saronisi652closer-ship-it.github.io/rinto-region/" target="_blank">
-  <div class="icon i2">ミ</div>
-  <div class="app-label">ミトモン</div>
-</a>
-
-<a class="app-icon-wrap" href="https://saronisi652closer-ship-it.github.io/-/" target="_blank">
-  <div class="icon i3">メ</div>
-  <div class="app-label">メモ</div>
-</a>
-
-<a class="app-icon-wrap" href="https://saronisi652closer-ship-it.github.io/Multitasking/" target="_blank">
-  <div class="icon i4">タ</div>
-  <div class="app-label">タスク</div>
-</a>
-
-<a class="app-icon-wrap" href="https://saronisi652closer-ship-it.github.io/shopping-list/" target="_blank">
-  <div class="icon i5">在</div>
-  <div class="app-label">在庫</div>
-</a>
-
-<a class="app-icon-wrap" href="https://saronisi652closer-ship-it.github.io/duplicate-photo-checker/" target="_blank">
-  <div class="icon i1">写</div>
-  <div class="app-label">重複写真</div>
-</a>
-
-<a class="app-icon-wrap" href="https://saronisi652closer-ship-it.github.io/Pal/" target="_blank">
-  <div class="icon i7">パ</div>
-  <div class="app-label">Pal</div>
-</a>
-  
-</div>
-
-<div class="widget">
-  <div class="widget-item"><span>よく使う</span><strong>ミトモン</strong></div>
-  <div class="widget-item"><span>生活</span><strong>在庫管理</strong></div>
-</div>
-
-</div>
-</div>
-
+/* Service Worker (offline cache of this launcher page) */
+if ('serviceWorker' in navigator) {
+  const sw = `
+const CACHE='myapps-v1';
+const ASSETS=[self.location.pathname];
+self.addEventListener('install',e=>e.waitUntil(caches.open(CACHE).then(c=>c.addAll(ASSETS))));
+self.addEventListener('fetch',e=>e.respondWith(
+  caches.match(e.request).then(r=>r||fetch(e.request).catch(()=>caches.match(e.request)))
+));`;
+  const url = URL.createObjectURL(new Blob([sw],{type:'application/javascript'}));
+  navigator.serviceWorker.register(url).catch(()=>{});
+}
+</script>
 </body>
 </html>
