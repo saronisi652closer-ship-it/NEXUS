@@ -160,14 +160,15 @@ header {
 .i7{background:linear-gradient(135deg,#00c9a7,#007f73)}
 .i8{background:linear-gradient(135deg,#f6d365,#fda085)}
 
-.app-info { flex:1; min-width:0; }
-.app-name { font-size:13px; font-weight:700; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
-.app-desc { font-size:11px; color:var(--muted); margin-top:2px; }
+.app-info { flex:1; min-width:0; display:flex; flex-direction:column; gap:2px; }
+.app-name { font-size:13px; font-weight:700; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; line-height:1.3; }
+.app-desc { font-size:11px; color:var(--muted); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; line-height:1.4; }
 .app-badge {
   font-size:9px; font-weight:700; letter-spacing:.8px; text-transform:uppercase;
-  padding:3px 6px; border-radius:6px;
+  padding:2px 6px; border-radius:5px;
   background:rgba(76,222,140,.1); color:var(--green);
-  border:1px solid rgba(76,222,140,.2); flex-shrink:0;
+  border:1px solid rgba(76,222,140,.2);
+  display:inline-block; align-self:flex-start; margin-top:2px;
 }
 
 /* ── Widget ── */
@@ -192,6 +193,7 @@ header {
   padding:12px 16px; border-right:1px solid var(--border);
   border-bottom:1px solid var(--border);
   transition:background .15s;
+  text-decoration:none; color:inherit; cursor:pointer;
 }
 .widget-item:hover { background:rgba(255,255,255,.04); }
 .widget-key { font-size:11px; color:var(--muted); }
@@ -306,76 +308,76 @@ header {
   <div class="section-title">アプリ一覧</div>
   <div class="app-grid" id="appGrid">
 
-    <a class="app-card" href="https://saronise652closer-ship-it.github.io/my-app/" target="_blank" data-name="趣味管理">
+    <a class="app-card" href="https://saronisi652closer-ship-it.github.io/my-app/" target="_blank" data-name="趣味管理">
       <div class="app-icon i1">趣</div>
       <div class="app-info">
         <div class="app-name">趣味管理</div>
         <div class="app-desc">趣味・コレクションを管理</div>
+        <span class="app-badge">オフライン可</span>
       </div>
-      <span class="app-badge">オフライン可</span>
     </a>
 
-    <a class="app-card" href="https://saronise652closer-ship-it.github.io/rinto-region/" target="_blank" data-name="ミトモン">
+    <a class="app-card" href="https://saronisi652closer-ship-it.github.io/rinto-region/" target="_blank" data-name="ミトモン">
       <div class="app-icon i2">ミ</div>
       <div class="app-info">
         <div class="app-name">ミトモン</div>
         <div class="app-desc">ゲームアプリ</div>
+        <span class="app-badge">オフライン可</span>
       </div>
-      <span class="app-badge">オフライン可</span>
     </a>
 
-    <a class="app-card" href="https://saronise652closer-ship-it.github.io/-/" target="_blank" data-name="オフラインメモ">
+    <a class="app-card" href="https://saronisi652closer-ship-it.github.io/-/" target="_blank" data-name="オフラインメモ">
       <div class="app-icon i3">メ</div>
       <div class="app-info">
         <div class="app-name">オフラインメモ</div>
         <div class="app-desc">ネット不要のメモ帳</div>
+        <span class="app-badge">オフライン可</span>
       </div>
-      <span class="app-badge">オフライン可</span>
     </a>
 
-    <a class="app-card" href="https://saronise652closer-ship-it.github.io/Multitasking/" target="_blank" data-name="マルチタスク">
+    <a class="app-card" href="https://saronisi652closer-ship-it.github.io/Multitasking/" target="_blank" data-name="マルチタスク">
       <div class="app-icon i4">タ</div>
       <div class="app-info">
         <div class="app-name">マルチタスク</div>
         <div class="app-desc">タスク管理アプリ</div>
+        <span class="app-badge">オフライン可</span>
       </div>
-      <span class="app-badge">オフライン可</span>
     </a>
 
-    <a class="app-card" href="https://saronise652closer-ship-it.github.io/shopping-list/" target="_blank" data-name="在庫管理">
+    <a class="app-card" href="https://saronisi652closer-ship-it.github.io/shopping-list/" target="_blank" data-name="在庫管理">
       <div class="app-icon i5">在</div>
       <div class="app-info">
         <div class="app-name">在庫管理</div>
         <div class="app-desc">買い物・在庫チェック</div>
+        <span class="app-badge">オフライン可</span>
       </div>
-      <span class="app-badge">オフライン可</span>
     </a>
 
-    <a class="app-card" href="https://saronise652closer-ship-it.github.io/duplicate-photo-checker/" target="_blank" data-name="重複写真チェッカー">
+    <a class="app-card" href="https://saronisi652closer-ship-it.github.io/duplicate-photo-checker/" target="_blank" data-name="重複写真チェッカー">
       <div class="app-icon i6">写</div>
       <div class="app-info">
         <div class="app-name">重複写真</div>
         <div class="app-desc">重複画像を検出・整理</div>
+        <span class="app-badge">オフライン可</span>
       </div>
-      <span class="app-badge">オフライン可</span>
     </a>
 
-    <a class="app-card" href="https://saronise652closer-ship-it.github.io/Pal/" target="_blank" data-name="Pal">
+    <a class="app-card" href="https://saronisi652closer-ship-it.github.io/Pal/" target="_blank" data-name="Pal">
       <div class="app-icon i7">パ</div>
       <div class="app-info">
         <div class="app-name">Pal</div>
         <div class="app-desc">コンパニオンアプリ</div>
+        <span class="app-badge">オフライン可</span>
       </div>
-      <span class="app-badge">オフライン可</span>
     </a>
 
-    <a class="app-card" href="https://saronise652closer-ship-it.github.io/Book.game/" target="_blank" data-name="本・ゲーム">
+    <a class="app-card" href="https://saronisi652closer-ship-it.github.io/Book.game/" target="_blank" data-name="本・ゲーム">
       <div class="app-icon i8">本</div>
       <div class="app-info">
         <div class="app-name">本・ゲーム</div>
         <div class="app-desc">読書・ゲーム管理</div>
+        <span class="app-badge">オフライン可</span>
       </div>
-      <span class="app-badge">オフライン可</span>
     </a>
 
   </div>
@@ -386,22 +388,22 @@ header {
   <div class="widget">
     <div class="widget-header">クイックアクセス</div>
     <div class="widget-grid">
-      <div class="widget-item">
+      <a class="widget-item" href="https://saronisi652closer-ship-it.github.io/rinto-region/" target="_blank">
         <span class="widget-key">ゲーム</span>
         <span class="widget-val"><span class="dot d1"></span>ミトモン</span>
-      </div>
-      <div class="widget-item">
+      </a>
+      <a class="widget-item" href="https://saronisi652closer-ship-it.github.io/shopping-list/" target="_blank">
         <span class="widget-key">生活</span>
         <span class="widget-val"><span class="dot d2"></span>在庫管理</span>
-      </div>
-      <div class="widget-item">
+      </a>
+      <a class="widget-item" href="https://saronisi652closer-ship-it.github.io/my-app/" target="_blank">
         <span class="widget-key">趣味</span>
         <span class="widget-val"><span class="dot d3"></span>趣味管理</span>
-      </div>
-      <div class="widget-item">
+      </a>
+      <a class="widget-item" href="https://saronisi652closer-ship-it.github.io/Book.game/" target="_blank">
         <span class="widget-key">整理</span>
         <span class="widget-val"><span class="dot d4"></span>本・ゲーム</span>
-      </div>
+      </a>
     </div>
   </div>
 
@@ -415,11 +417,11 @@ header {
     </div>
     <div class="github-info">
       <div class="name">GitHub リポジトリ</div>
-      <div class="desc">saronise652closer-ship-it — ソースコード一覧</div>
+      <div class="desc">saronisi652closer-ship-it — ソースコード一覧</div>
     </div>
     <div class="github-right">
       <span class="online-only-badge">オンライン専用</span>
-      <a id="githubBtn" class="github-btn" href="https://github.com/saronise652closer-ship-it" target="_blank">
+      <a id="githubBtn" class="github-btn" href="https://github.com/saronisi652closer-ship-it" target="_blank">
         <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
           <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/>
           <polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/>
@@ -443,7 +445,7 @@ const pill   = document.getElementById('statusPill');
 const txt    = document.getElementById('statusText');
 const banner = document.getElementById('offlineBanner');
 const ghBtn  = document.getElementById('githubBtn');
-const GHURL  = 'https://github.com/saronise652closer-ship-it';
+const GHURL  = 'https://github.com/saronisi652closer-ship-it';
 
 function setOnline(on) {
   pill.className = 'status-pill ' + (on ? 'online' : 'offline');
