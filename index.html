@@ -4,7 +4,19 @@
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
 <title>My Apps</title>
+
+<!-- PWA Meta -->
+<meta name="theme-color" content="#0f1117"/>
+<meta name="description" content="GitHubで作ったアプリ一覧ランチャー"/>
+<meta name="mobile-web-app-capable" content="yes"/>
+<meta name="apple-mobile-web-app-capable" content="yes"/>
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
+<meta name="apple-mobile-web-app-title" content="My Apps"/>
+<!-- Apple touch icon (inline SVG → data URI set via JS) -->
+<link id="apple-touch-icon" rel="apple-touch-icon"/>
+
 <link href="https://fonts.googleapis.com/css2?family=Syne:wght@600;800&family=Noto+Sans+JP:wght@400;500;700&display=swap" rel="stylesheet">
+
 <style>
 :root {
   --bg:       #0f1117;
@@ -19,138 +31,113 @@
   --green:    #4cde8c;
   --r:        16px;
 }
-
 *{box-sizing:border-box;margin:0;padding:0}
-
 body {
-  font-family: 'Noto Sans JP', sans-serif;
-  background: var(--bg);
-  color: var(--text);
-  min-height: 100vh;
-  padding: 40px 20px 60px;
+  font-family:'Noto Sans JP',sans-serif;
+  background:var(--bg); color:var(--text);
+  min-height:100vh; padding:40px 20px 60px;
   background-image:
-    radial-gradient(ellipse 60% 40% at 10% 0%,  rgba(240,192,64,.07) 0%, transparent 60%),
-    radial-gradient(ellipse 50% 50% at 90% 100%, rgba(94,184,255,.06) 0%, transparent 55%);
+    radial-gradient(ellipse 60% 40% at 10% 0%,rgba(240,192,64,.07) 0%,transparent 60%),
+    radial-gradient(ellipse 50% 50% at 90% 100%,rgba(94,184,255,.06) 0%,transparent 55%);
 }
 body::before {
-  content:'';
-  position:fixed; inset:0;
-  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.04'/%3E%3C/svg%3E");
+  content:''; position:fixed; inset:0;
+  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.04'/%3E%3C/svg%3E");
   background-size:180px; pointer-events:none; z-index:0; opacity:.6;
 }
+.wrap{max-width:900px;margin:0 auto;position:relative;z-index:1;}
 
-.wrap { max-width:900px; margin:0 auto; position:relative; z-index:1; }
+/* Header */
+header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:32px;animation:fadeUp .5s ease both;}
+.header-left h1{font-family:'Syne',sans-serif;font-size:clamp(32px,6vw,52px);font-weight:800;letter-spacing:-2px;line-height:1;background:linear-gradient(110deg,#fff 0%,var(--accent) 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.header-left .tagline{font-size:13px;color:var(--muted);margin-top:6px;letter-spacing:.5px;}
+.header-right{display:flex;flex-direction:column;align-items:flex-end;gap:8px;}
+.date-badge{font-size:11px;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);border:1px solid var(--border);padding:5px 10px;border-radius:20px;}
+.status-pill{display:inline-flex;align-items:center;gap:6px;font-size:11px;font-weight:700;letter-spacing:.5px;padding:5px 12px;border-radius:20px;transition:all .3s;}
+.status-pill.online {background:rgba(76,222,140,.12);color:var(--green);border:1px solid rgba(76,222,140,.3);}
+.status-pill.offline{background:rgba(255,107,107,.12);color:var(--danger);border:1px solid rgba(255,107,107,.3);}
+.status-dot{width:7px;height:7px;border-radius:50%;animation:pulse 2s infinite;}
+.online  .status-dot{background:var(--green);}
+.offline .status-dot{background:var(--danger);animation:none;}
 
-/* ── Header ── */
-header {
-  display:flex; justify-content:space-between; align-items:flex-start;
-  margin-bottom:32px;
-  animation: fadeUp .5s ease both;
+/* PWA Install banner */
+.install-banner{
+  display:none;align-items:center;gap:12px;
+  padding:12px 16px;border-radius:var(--r);
+  background:rgba(240,192,64,.08);border:1px solid rgba(240,192,64,.2);
+  margin-bottom:20px;animation:fadeUp .4s ease both;
 }
-.header-left h1 {
-  font-family:'Syne',sans-serif;
-  font-size: clamp(32px,6vw,52px);
-  font-weight:800; letter-spacing:-2px; line-height:1;
-  background: linear-gradient(110deg,#fff 0%,var(--accent) 100%);
-  -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text;
+.install-banner.show{display:flex;}
+.install-banner-text{flex:1;font-size:12px;color:var(--text);}
+.install-banner-text strong{display:block;font-size:13px;color:var(--accent);margin-bottom:2px;}
+.install-btn{
+  padding:7px 14px;border-radius:10px;
+  background:var(--accent);color:#0f1117;
+  border:none;font-size:12px;font-weight:700;
+  font-family:inherit;cursor:pointer;flex-shrink:0;
+  transition:opacity .2s;
 }
-.header-left .tagline {
-  font-size:13px; color:var(--muted); margin-top:6px; letter-spacing:.5px;
-}
-.header-right { display:flex; flex-direction:column; align-items:flex-end; gap:8px; }
-.date-badge {
-  font-size:11px; letter-spacing:1.5px; text-transform:uppercase;
-  color:var(--muted); border:1px solid var(--border);
-  padding:5px 10px; border-radius:20px;
-}
-.status-pill {
-  display:inline-flex; align-items:center; gap:6px;
-  font-size:11px; font-weight:700; letter-spacing:.5px;
-  padding:5px 12px; border-radius:20px; transition:all .3s;
-}
-.status-pill.online  { background:rgba(76,222,140,.12); color:var(--green); border:1px solid rgba(76,222,140,.3); }
-.status-pill.offline { background:rgba(255,107,107,.12); color:var(--danger); border:1px solid rgba(255,107,107,.3); }
-.status-dot { width:7px; height:7px; border-radius:50%; animation:pulse 2s infinite; }
-.online  .status-dot { background:var(--green); }
-.offline .status-dot { background:var(--danger); animation:none; }
-
-/* ── Divider ── */
-.divider { height:1px; background:var(--border); margin-bottom:24px; animation:fadeUp .4s .05s ease both; }
-
-/* ── Offline banner ── */
-.offline-banner {
-  display:none; align-items:center; gap:10px;
-  padding:12px 16px; border-radius:var(--r);
-  background:rgba(255,107,107,.08); border:1px solid rgba(255,107,107,.2);
-  color:var(--danger); font-size:12px;
-  margin-bottom:20px;
-}
-.offline-banner.show { display:flex; }
-
-/* ── Search ── */
-.search-wrap { position:relative; margin-bottom:28px; animation:fadeUp .4s .1s ease both; }
-.search-wrap svg { position:absolute; left:16px; top:50%; transform:translateY(-50%); opacity:.4; }
-#search {
-  width:100%; padding:13px 16px 13px 46px;
-  border-radius:var(--r); border:1px solid var(--border);
-  background:var(--surface); color:var(--text);
-  font-size:14px; font-family:inherit; outline:none;
-  transition:border .2s, background .2s;
-}
-#search:focus { border-color:rgba(240,192,64,.35); background:var(--surface2); }
-#search::placeholder { color:var(--muted); }
-
-/* ── Section title ── */
-.section-title {
-  font-size:10px; letter-spacing:2px; text-transform:uppercase;
-  color:var(--muted); margin-bottom:14px; padding-left:2px;
+.install-btn:hover{opacity:.85;}
+.install-close{
+  background:none;border:none;color:var(--muted);
+  font-size:18px;cursor:pointer;flex-shrink:0;padding:0 4px;
+  line-height:1;
 }
 
-/* ── App Grid ── */
-.app-grid {
-  display:grid;
-  grid-template-columns: repeat(auto-fill, minmax(200px,1fr));
-  gap:10px; margin-bottom:36px;
-}
+/* Divider */
+.divider{height:1px;background:var(--border);margin-bottom:24px;animation:fadeUp .4s .05s ease both;}
 
-.app-card {
-  display:flex; align-items:center; gap:14px;
-  padding:14px; border-radius:var(--r);
-  background:var(--surface); border:1px solid var(--border);
-  text-decoration:none; color:var(--text);
-  transition:background .2s, border-color .2s, transform .18s cubic-bezier(.34,1.4,.64,1);
+/* Offline banner */
+.offline-banner{
+  display:none;align-items:center;gap:10px;
+  padding:12px 16px;border-radius:var(--r);
+  background:rgba(255,107,107,.08);border:1px solid rgba(255,107,107,.2);
+  color:var(--danger);font-size:12px;margin-bottom:20px;
+}
+.offline-banner.show{display:flex;}
+
+/* Search */
+.search-wrap{position:relative;margin-bottom:28px;animation:fadeUp .4s .1s ease both;}
+.search-wrap svg{position:absolute;left:16px;top:50%;transform:translateY(-50%);opacity:.4;}
+#search{
+  width:100%;padding:13px 16px 13px 46px;
+  border-radius:var(--r);border:1px solid var(--border);
+  background:var(--surface);color:var(--text);
+  font-size:14px;font-family:inherit;outline:none;
+  transition:border .2s,background .2s;
+}
+#search:focus{border-color:rgba(240,192,64,.35);background:var(--surface2);}
+#search::placeholder{color:var(--muted);}
+
+/* Section title */
+.section-title{font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:14px;padding-left:2px;}
+
+/* App Grid */
+.app-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:10px;margin-bottom:36px;}
+.app-card{
+  display:flex;align-items:center;gap:14px;
+  padding:14px;border-radius:var(--r);
+  background:var(--surface);border:1px solid var(--border);
+  text-decoration:none;color:var(--text);
+  transition:background .2s,border-color .2s,transform .18s cubic-bezier(.34,1.4,.64,1);
   animation:fadeUp .5s ease both;
-  position:relative; overflow:hidden;
+  position:relative;overflow:hidden;
 }
-.app-card::before {
-  content:''; position:absolute; inset:0;
-  background:linear-gradient(135deg,rgba(255,255,255,.03) 0%,transparent 60%);
-  pointer-events:none;
-}
-.app-card:hover { background:var(--surface2); border-color:rgba(240,192,64,.22); transform:translateY(-2px); }
-.app-card:active { transform:scale(.97); }
+.app-card::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(255,255,255,.03) 0%,transparent 60%);pointer-events:none;}
+.app-card:hover{background:var(--surface2);border-color:rgba(240,192,64,.22);transform:translateY(-2px);}
+.app-card:active{transform:scale(.97);}
+.app-card:nth-child(1){animation-delay:.10s}.app-card:nth-child(2){animation-delay:.14s}
+.app-card:nth-child(3){animation-delay:.18s}.app-card:nth-child(4){animation-delay:.22s}
+.app-card:nth-child(5){animation-delay:.26s}.app-card:nth-child(6){animation-delay:.30s}
+.app-card:nth-child(7){animation-delay:.34s}.app-card:nth-child(8){animation-delay:.38s}
 
-.app-card:nth-child(1){animation-delay:.10s}
-.app-card:nth-child(2){animation-delay:.14s}
-.app-card:nth-child(3){animation-delay:.18s}
-.app-card:nth-child(4){animation-delay:.22s}
-.app-card:nth-child(5){animation-delay:.26s}
-.app-card:nth-child(6){animation-delay:.30s}
-.app-card:nth-child(7){animation-delay:.34s}
-.app-card:nth-child(8){animation-delay:.38s}
-
-.app-icon {
-  width:50px; height:50px; border-radius:14px; flex-shrink:0;
-  display:flex; align-items:center; justify-content:center;
-  font-family:'Noto Sans JP',sans-serif;
-  font-size:19px; font-weight:700;
-  box-shadow:0 4px 14px rgba(0,0,0,.3);
-  position:relative; overflow:hidden;
+.app-icon{
+  width:50px;height:50px;border-radius:14px;flex-shrink:0;
+  display:flex;align-items:center;justify-content:center;
+  font-family:'Noto Sans JP',sans-serif;font-size:19px;font-weight:700;
+  box-shadow:0 4px 14px rgba(0,0,0,.3);position:relative;overflow:hidden;
 }
-.app-icon::after {
-  content:''; position:absolute; inset:0;
-  background:linear-gradient(145deg,rgba(255,255,255,.18) 0%,transparent 55%);
-}
+.app-icon::after{content:'';position:absolute;inset:0;background:linear-gradient(145deg,rgba(255,255,255,.18) 0%,transparent 55%);}
 .i1{background:linear-gradient(135deg,#68b7ff,#295eff)}
 .i2{background:linear-gradient(135deg,#6ce28c,#179a5d)}
 .i3{background:linear-gradient(135deg,#ffb04d,#ff6a3d)}
@@ -160,118 +147,65 @@ header {
 .i7{background:linear-gradient(135deg,#00c9a7,#007f73)}
 .i8{background:linear-gradient(135deg,#f6d365,#fda085)}
 
-.app-info { flex:1; min-width:0; display:flex; flex-direction:column; gap:2px; }
-.app-name { font-size:13px; font-weight:700; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; line-height:1.3; }
-.app-desc { font-size:11px; color:var(--muted); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; line-height:1.4; }
-.app-badge {
-  font-size:9px; font-weight:700; letter-spacing:.8px; text-transform:uppercase;
-  padding:2px 6px; border-radius:5px;
-  background:rgba(76,222,140,.1); color:var(--green);
-  border:1px solid rgba(76,222,140,.2);
-  display:inline-block; align-self:flex-start; margin-top:2px;
-}
+.app-info{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px;}
+.app-name{font-size:13px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;line-height:1.3;}
+.app-desc{font-size:11px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;line-height:1.4;}
+.app-badge{font-size:9px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;padding:2px 6px;border-radius:5px;background:rgba(76,222,140,.1);color:var(--green);border:1px solid rgba(76,222,140,.2);display:inline-block;align-self:flex-start;margin-top:2px;}
 
-/* ── Widget ── */
-.widget {
-  border-radius:var(--r); border:1px solid var(--border);
-  background:var(--surface); overflow:hidden;
-  margin-bottom:36px;
-  animation:fadeUp .5s .42s ease both;
-}
-.widget-header {
-  padding:14px 16px 10px;
-  font-family:'Syne',sans-serif; font-size:13px; font-weight:700;
-  letter-spacing:.5px; color:var(--accent);
-  border-bottom:1px solid var(--border);
-}
-.widget-grid {
-  display:grid;
-  grid-template-columns: repeat(auto-fill, minmax(180px,1fr));
-}
-.widget-item {
-  display:flex; justify-content:space-between; align-items:center;
-  padding:12px 16px; border-right:1px solid var(--border);
-  border-bottom:1px solid var(--border);
-  transition:background .15s;
-  text-decoration:none; color:inherit; cursor:pointer;
-}
-.widget-item:hover { background:rgba(255,255,255,.04); }
-.widget-key { font-size:11px; color:var(--muted); }
-.widget-val {
-  font-size:12px; font-weight:700; color:var(--text);
-  display:flex; align-items:center; gap:5px;
-}
-.dot { width:6px; height:6px; border-radius:50%; }
-.d1 { background:#68b7ff; box-shadow:0 0 5px #68b7ff; }
-.d2 { background:var(--green); box-shadow:0 0 5px var(--green); }
-.d3 { background:#d77dff; box-shadow:0 0 5px #d77dff; }
-.d4 { background:#fda085; box-shadow:0 0 5px #fda085; }
+/* Widget */
+.widget{border-radius:var(--r);border:1px solid var(--border);background:var(--surface);overflow:hidden;margin-bottom:36px;animation:fadeUp .5s .42s ease both;}
+.widget-header{padding:14px 16px 10px;font-family:'Syne',sans-serif;font-size:13px;font-weight:700;letter-spacing:.5px;color:var(--accent);border-bottom:1px solid var(--border);}
+.widget-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));}
+.widget-item{display:flex;justify-content:space-between;align-items:center;padding:12px 16px;border-right:1px solid var(--border);border-bottom:1px solid var(--border);transition:background .15s;text-decoration:none;color:inherit;cursor:pointer;}
+.widget-item:hover{background:rgba(255,255,255,.04);}
+.widget-key{font-size:11px;color:var(--muted);}
+.widget-val{font-size:12px;font-weight:700;color:var(--text);display:flex;align-items:center;gap:5px;}
+.dot{width:6px;height:6px;border-radius:50%;}
+.d1{background:#68b7ff;box-shadow:0 0 5px #68b7ff;}
+.d2{background:var(--green);box-shadow:0 0 5px var(--green);}
+.d3{background:#d77dff;box-shadow:0 0 5px #d77dff;}
+.d4{background:#fda085;box-shadow:0 0 5px #fda085;}
 
-/* ── GitHub ── */
-.github-section {
-  border-radius:var(--r); border:1px solid var(--border);
-  background:var(--surface); padding:18px 20px;
-  display:flex; align-items:center; gap:16px;
-  animation:fadeUp .5s .48s ease both;
-  position:relative; overflow:hidden;
-}
-.github-section::after {
-  content:''; position:absolute; inset:0;
-  background:linear-gradient(90deg,rgba(255,255,255,.02) 0%,transparent 60%);
-  pointer-events:none;
-}
-.github-icon {
-  width:46px; height:46px; border-radius:13px;
-  background:#24292e; flex-shrink:0;
-  display:flex; align-items:center; justify-content:center;
-  border:1px solid rgba(255,255,255,.1);
-}
-.github-info { flex:1; }
-.github-info .name { font-size:13px; font-weight:700; }
-.github-info .desc { font-size:11px; color:var(--muted); margin-top:2px; }
-.github-right { display:flex; flex-direction:column; align-items:flex-end; gap:6px; }
-.online-only-badge {
-  font-size:9px; font-weight:700; letter-spacing:.8px; text-transform:uppercase;
-  padding:3px 7px; border-radius:6px;
-  background:rgba(94,184,255,.1); color:var(--accent2);
-  border:1px solid rgba(94,184,255,.2);
-}
-.github-btn {
-  display:inline-flex; align-items:center; gap:6px;
-  padding:8px 14px; border-radius:10px;
-  background:rgba(255,255,255,.07); color:var(--text);
-  border:1px solid var(--border);
-  font-size:12px; font-weight:600; font-family:inherit;
-  text-decoration:none; cursor:pointer;
-  transition:background .2s, opacity .2s;
-}
-.github-btn:hover { background:rgba(255,255,255,.13); }
-.github-btn.disabled { opacity:.3; cursor:not-allowed; pointer-events:none; }
+/* GitHub */
+.github-section{border-radius:var(--r);border:1px solid var(--border);background:var(--surface);padding:18px 20px;display:flex;align-items:center;gap:16px;animation:fadeUp .5s .48s ease both;position:relative;overflow:hidden;}
+.github-section::after{content:'';position:absolute;inset:0;background:linear-gradient(90deg,rgba(255,255,255,.02) 0%,transparent 60%);pointer-events:none;}
+.github-icon{width:46px;height:46px;border-radius:13px;background:#24292e;flex-shrink:0;display:flex;align-items:center;justify-content:center;border:1px solid rgba(255,255,255,.1);}
+.github-info{flex:1;}
+.github-info .name{font-size:13px;font-weight:700;}
+.github-info .desc{font-size:11px;color:var(--muted);margin-top:2px;}
+.github-right{display:flex;flex-direction:column;align-items:flex-end;gap:6px;}
+.online-only-badge{font-size:9px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;padding:3px 7px;border-radius:6px;background:rgba(94,184,255,.1);color:var(--accent2);border:1px solid rgba(94,184,255,.2);}
+.github-btn{display:inline-flex;align-items:center;gap:6px;padding:8px 14px;border-radius:10px;background:rgba(255,255,255,.07);color:var(--text);border:1px solid var(--border);font-size:12px;font-weight:600;font-family:inherit;text-decoration:none;cursor:pointer;transition:background .2s,opacity .2s;}
+.github-btn:hover{background:rgba(255,255,255,.13);}
+.github-btn.disabled{opacity:.3;cursor:not-allowed;pointer-events:none;}
 
-#no-results { display:none; text-align:center; padding:36px 20px; color:var(--muted); font-size:13px; }
+#no-results{display:none;text-align:center;padding:36px 20px;color:var(--muted);font-size:13px;}
 
-/* ── Animations ── */
-@keyframes fadeUp {
-  from { opacity:0; transform:translateY(14px); }
-  to   { opacity:1; transform:translateY(0); }
-}
-@keyframes pulse {
-  0%,100% { opacity:1; box-shadow:0 0 0 0 rgba(76,222,140,.4); }
-  50%      { opacity:.7; box-shadow:0 0 0 5px rgba(76,222,140,0); }
-}
+@keyframes fadeUp{from{opacity:0;transform:translateY(14px);}to{opacity:1;transform:translateY(0);}}
+@keyframes pulse{0%,100%{opacity:1;box-shadow:0 0 0 0 rgba(76,222,140,.4);}50%{opacity:.7;box-shadow:0 0 0 5px rgba(76,222,140,0);}}
 
-/* ── Responsive ── */
 @media(max-width:520px){
-  body { padding:20px 12px 48px; }
-  .app-grid { grid-template-columns:1fr 1fr; }
-  .widget-grid { grid-template-columns:1fr 1fr; }
-  .github-section { flex-wrap:wrap; }
-  .github-right { flex-direction:row; align-items:center; width:100%; justify-content:space-between; }
+  body{padding:20px 12px 48px;}
+  .app-grid{grid-template-columns:1fr 1fr;}
+  .widget-grid{grid-template-columns:1fr 1fr;}
+  .github-section{flex-wrap:wrap;}
+  .github-right{flex-direction:row;align-items:center;width:100%;justify-content:space-between;}
+  .install-banner{flex-wrap:wrap;}
 }
 </style>
 </head>
 <body>
 <div class="wrap">
+
+  <!-- PWA Install Banner -->
+  <div class="install-banner" id="installBanner">
+    <div class="install-banner-text">
+      <strong>📲 アプリとしてインストール</strong>
+      ホーム画面に追加してオフラインでも使えます
+    </div>
+    <button class="install-btn" id="installBtn">インストール</button>
+    <button class="install-close" id="installClose" aria-label="閉じる">×</button>
+  </div>
 
   <!-- Header -->
   <header>
@@ -293,7 +227,7 @@ header {
   <!-- Offline banner -->
   <div class="offline-banner" id="offlineBanner">
     <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/></svg>
-    オフラインです。アプリはキャッシュ済みのものをご利用できます。GitHubリンクはご利用いただけません。
+    オフラインです。キャッシュ済みアプリが使用できます。GitHubはご利用いただけません。
   </div>
 
   <!-- Search -->
@@ -434,19 +368,18 @@ header {
 </div><!-- /wrap -->
 
 <script>
-/* Date */
+/* ── Date ── */
 const d = new Date();
 const days = ['日','月','火','水','木','金','土'];
 document.getElementById('dateLabel').textContent =
   `${d.getFullYear()}/${d.getMonth()+1}/${d.getDate()} (${days[d.getDay()]})`;
 
-/* Online / Offline */
+/* ── Online / Offline ── */
 const pill   = document.getElementById('statusPill');
 const txt    = document.getElementById('statusText');
 const banner = document.getElementById('offlineBanner');
 const ghBtn  = document.getElementById('githubBtn');
 const GHURL  = 'https://github.com/saronisi652closer-ship-it';
-
 function setOnline(on) {
   pill.className = 'status-pill ' + (on ? 'online' : 'offline');
   txt.textContent = on ? 'オンライン' : 'オフライン';
@@ -458,12 +391,11 @@ setOnline(navigator.onLine);
 window.addEventListener('online',  () => setOnline(true));
 window.addEventListener('offline', () => setOnline(false));
 
-/* Search */
+/* ── Search ── */
 const input = document.getElementById('search');
 const cards = document.querySelectorAll('.app-card');
 const noRes = document.getElementById('no-results');
 const echo  = document.getElementById('query-echo');
-
 input.addEventListener('input', () => {
   const q = input.value.trim().toLowerCase();
   let n = 0;
@@ -476,18 +408,184 @@ input.addEventListener('input', () => {
   echo.textContent = input.value.trim();
 });
 
-/* Service Worker – このページ自体をオフラインキャッシュ */
-if ('serviceWorker' in navigator) {
-  const sw = `
-const CACHE='myapps-v2';
-self.addEventListener('install',e=>e.waitUntil(caches.open(CACHE).then(c=>c.addAll([self.location.pathname]))));
-self.addEventListener('fetch',e=>e.respondWith(
-  caches.match(e.request).then(r=>r||fetch(e.request).catch(()=>caches.match(e.request)))
-));`;
-  navigator.serviceWorker.register(
-    URL.createObjectURL(new Blob([sw],{type:'application/javascript'}))
-  ).catch(()=>{});
+/* ── PWA: App Icon (SVG → PNG canvas → data URI) ── */
+function makeIconDataURL(size) {
+  const c = document.createElement('canvas');
+  c.width = c.height = size;
+  const ctx = c.getContext('2d');
+  // Background
+  const gr = ctx.createLinearGradient(0, 0, size, size);
+  gr.addColorStop(0, '#1f2436');
+  gr.addColorStop(1, '#0f1117');
+  const r = size * 0.22;
+  ctx.beginPath();
+  ctx.moveTo(r, 0); ctx.lineTo(size - r, 0);
+  ctx.quadraticCurveTo(size, 0, size, r);
+  ctx.lineTo(size, size - r);
+  ctx.quadraticCurveTo(size, size, size - r, size);
+  ctx.lineTo(r, size);
+  ctx.quadraticCurveTo(0, size, 0, size - r);
+  ctx.lineTo(0, r);
+  ctx.quadraticCurveTo(0, 0, r, 0);
+  ctx.closePath();
+  ctx.fillStyle = gr;
+  ctx.fill();
+  // Border
+  ctx.strokeStyle = 'rgba(255,255,255,0.1)';
+  ctx.lineWidth = size * 0.02;
+  ctx.stroke();
+  // Grid dots
+  const colors = ['#68b7ff','#6ce28c','#ffb04d','#d77dff','#ff7aa2','#00d2ff','#00c9a7','#f6d365'];
+  const cols = 4, rows = 2;
+  const dot = size * 0.14;
+  const gap = size * 0.04;
+  const totalW = cols * dot + (cols - 1) * gap;
+  const totalH = rows * dot + (rows - 1) * gap;
+  const sx = (size - totalW) / 2;
+  const sy = (size - totalH) / 2;
+  let ci = 0;
+  for (let row = 0; row < rows; row++) {
+    for (let col = 0; col < cols; col++) {
+      const x = sx + col * (dot + gap);
+      const y = sy + row * (dot + gap);
+      const gr2 = ctx.createLinearGradient(x, y, x + dot, y + dot);
+      gr2.addColorStop(0, colors[ci]);
+      gr2.addColorStop(1, colors[ci] + 'aa');
+      ctx.beginPath();
+      ctx.roundRect(x, y, dot, dot, dot * 0.3);
+      ctx.fillStyle = gr2;
+      ctx.fill();
+      ci++;
+    }
+  }
+  return c.toDataURL('image/png');
 }
+
+/* ── PWA: Web App Manifest (injected as blob) ── */
+function injectManifest() {
+  const icon192 = makeIconDataURL(192);
+  const icon512 = makeIconDataURL(512);
+  // Apple touch icon
+  document.getElementById('apple-touch-icon').href = makeIconDataURL(180);
+
+  const manifest = {
+    name: 'My Apps',
+    short_name: 'My Apps',
+    description: 'GitHubで作ったアプリ一覧ランチャー',
+    start_url: './',
+    display: 'standalone',
+    orientation: 'portrait',
+    background_color: '#0f1117',
+    theme_color: '#0f1117',
+    lang: 'ja',
+    icons: [
+      { src: icon192, sizes: '192x192', type: 'image/png', purpose: 'any maskable' },
+      { src: icon512, sizes: '512x512', type: 'image/png', purpose: 'any maskable' },
+    ]
+  };
+  const blob = new Blob([JSON.stringify(manifest)], { type: 'application/json' });
+  const url  = URL.createObjectURL(blob);
+  const link = document.createElement('link');
+  link.rel = 'manifest'; link.href = url;
+  document.head.appendChild(link);
+}
+injectManifest();
+
+/* ── PWA: Service Worker (cache-first strategy) ── */
+const SW_CODE = `
+const CACHE = 'myapps-v3';
+const ASSETS = [self.location.pathname];
+
+self.addEventListener('install', e => {
+  e.waitUntil(
+    caches.open(CACHE).then(c => c.addAll(ASSETS)).then(() => self.skipWaiting())
+  );
+});
+
+self.addEventListener('activate', e => {
+  e.waitUntil(
+    caches.keys().then(keys =>
+      Promise.all(keys.filter(k => k !== CACHE).map(k => caches.delete(k)))
+    ).then(() => self.clients.claim())
+  );
+});
+
+self.addEventListener('fetch', e => {
+  const url = new URL(e.request.url);
+  // Always network-first for external URLs (GitHub etc.)
+  if (url.origin !== self.location.origin) {
+    e.respondWith(
+      fetch(e.request).catch(() => new Response('オフライン中です', { status: 503 }))
+    );
+    return;
+  }
+  // Cache-first for same-origin
+  e.respondWith(
+    caches.match(e.request).then(cached => {
+      if (cached) return cached;
+      return fetch(e.request).then(res => {
+        const clone = res.clone();
+        caches.open(CACHE).then(c => c.put(e.request, clone));
+        return res;
+      }).catch(() => caches.match(e.request));
+    })
+  );
+});
+`;
+
+if ('serviceWorker' in navigator) {
+  const swBlob = new Blob([SW_CODE], { type: 'application/javascript' });
+  const swURL  = URL.createObjectURL(swBlob);
+  navigator.serviceWorker.register(swURL, { scope: './' })
+    .then(reg => {
+      console.log('[SW] registered:', reg.scope);
+      reg.addEventListener('updatefound', () => {
+        const nw = reg.installing;
+        nw.addEventListener('statechange', () => {
+          if (nw.state === 'installed' && navigator.serviceWorker.controller) {
+            // New version available — optional: show reload prompt
+          }
+        });
+      });
+    })
+    .catch(err => console.warn('[SW] registration failed:', err));
+}
+
+/* ── PWA: Install prompt ── */
+let deferredPrompt = null;
+const installBanner = document.getElementById('installBanner');
+const installBtn    = document.getElementById('installBtn');
+const installClose  = document.getElementById('installClose');
+
+window.addEventListener('beforeinstallprompt', e => {
+  e.preventDefault();
+  deferredPrompt = e;
+  // Only show if not dismissed before
+  if (!localStorage.getItem('pwa-dismissed')) {
+    installBanner.classList.add('show');
+  }
+});
+
+installBtn.addEventListener('click', async () => {
+  if (!deferredPrompt) return;
+  deferredPrompt.prompt();
+  const { outcome } = await deferredPrompt.userChoice;
+  if (outcome === 'accepted') {
+    installBanner.classList.remove('show');
+    localStorage.setItem('pwa-dismissed', '1');
+  }
+  deferredPrompt = null;
+});
+
+installClose.addEventListener('click', () => {
+  installBanner.classList.remove('show');
+  localStorage.setItem('pwa-dismissed', '1');
+});
+
+window.addEventListener('appinstalled', () => {
+  installBanner.classList.remove('show');
+  deferredPrompt = null;
+});
 </script>
 </body>
 </html>
