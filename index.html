@@ -2,216 +2,103 @@
 <html lang="ja">
 <head>
 <meta charset="UTF-8"/>
-<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0,viewport-fit=cover"/>
 <title>My Apps</title>
-
-<!-- PWA Meta -->
+<link rel="manifest" href="./manifest.json"/>
 <meta name="theme-color" content="#0f1117"/>
-<meta name="description" content="GitHubで作ったアプリ一覧ランチャー"/>
 <meta name="mobile-web-app-capable" content="yes"/>
 <meta name="apple-mobile-web-app-capable" content="yes"/>
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
 <meta name="apple-mobile-web-app-title" content="My Apps"/>
-<!-- Apple touch icon (inline SVG → data URI set via JS) -->
-<link id="apple-touch-icon" rel="apple-touch-icon"/>
-
+<link rel="apple-touch-icon" href="./icons/icon-192.png"/>
 <link href="https://fonts.googleapis.com/css2?family=Syne:wght@600;800&family=Noto+Sans+JP:wght@400;500;700&display=swap" rel="stylesheet">
-
 <style>
-:root {
-  --bg:       #0f1117;
-  --surface:  #181c26;
-  --surface2: #1f2436;
-  --border:   rgba(255,255,255,0.07);
-  --accent:   #f0c040;
-  --accent2:  #5eb8ff;
-  --text:     #e4e9f4;
-  --muted:    rgba(228,233,244,0.45);
-  --danger:   #ff6b6b;
-  --green:    #4cde8c;
-  --r:        16px;
-}
-*{box-sizing:border-box;margin:0;padding:0}
-body {
-  font-family:'Noto Sans JP',sans-serif;
-  background:var(--bg); color:var(--text);
-  min-height:100vh; padding:40px 20px 60px;
-  background-image:
-    radial-gradient(ellipse 60% 40% at 10% 0%,rgba(240,192,64,.07) 0%,transparent 60%),
-    radial-gradient(ellipse 50% 50% at 90% 100%,rgba(94,184,255,.06) 0%,transparent 55%);
-}
-body::before {
-  content:''; position:fixed; inset:0;
-  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.04'/%3E%3C/svg%3E");
-  background-size:180px; pointer-events:none; z-index:0; opacity:.6;
-}
+:root{--bg:#0f1117;--surface:#181c26;--surface2:#1f2436;--border:rgba(255,255,255,.07);--accent:#f0c040;--accent2:#5eb8ff;--text:#e4e9f4;--muted:rgba(228,233,244,.45);--danger:#ff6b6b;--green:#4cde8c;--r:16px;}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
+body{font-family:'Noto Sans JP',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;padding:calc(40px + env(safe-area-inset-top,0px)) 20px calc(60px + env(safe-area-inset-bottom,0px));background-image:radial-gradient(ellipse 60% 40% at 10% 0%,rgba(240,192,64,.07) 0%,transparent 60%),radial-gradient(ellipse 50% 50% at 90% 100%,rgba(94,184,255,.06) 0%,transparent 55%);overscroll-behavior-y:contain;}
+body::before{content:'';position:fixed;inset:0;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.04'/%3E%3C/svg%3E");background-size:180px;pointer-events:none;z-index:0;opacity:.6;}
 .wrap{max-width:900px;margin:0 auto;position:relative;z-index:1;}
-
-/* Header */
+.install-banner{display:none;align-items:center;gap:12px;padding:12px 16px;border-radius:var(--r);background:rgba(240,192,64,.08);border:1px solid rgba(240,192,64,.2);margin-bottom:20px;}
+.install-banner.show{display:flex;}
+.install-text{flex:1;font-size:12px;}
+.install-text strong{display:block;font-size:13px;color:var(--accent);margin-bottom:2px;}
+.install-btn{padding:8px 14px;border-radius:10px;background:var(--accent);color:#0f1117;border:none;font-size:12px;font-weight:700;font-family:inherit;cursor:pointer;flex-shrink:0;min-height:40px;}
+.install-btn:active{opacity:.75;}
+.install-close{background:none;border:none;color:var(--muted);font-size:20px;cursor:pointer;padding:4px 6px;line-height:1;min-width:32px;min-height:32px;}
 header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:32px;animation:fadeUp .5s ease both;}
-.header-left h1{font-family:'Syne',sans-serif;font-size:clamp(32px,6vw,52px);font-weight:800;letter-spacing:-2px;line-height:1;background:linear-gradient(110deg,#fff 0%,var(--accent) 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
-.header-left .tagline{font-size:13px;color:var(--muted);margin-top:6px;letter-spacing:.5px;}
+.header-left h1{font-family:'Syne',sans-serif;font-size:clamp(28px,6vw,52px);font-weight:800;letter-spacing:-2px;line-height:1;background:linear-gradient(110deg,#fff 0%,var(--accent) 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.header-left .tagline{font-size:12px;color:var(--muted);margin-top:6px;}
 .header-right{display:flex;flex-direction:column;align-items:flex-end;gap:8px;}
-.date-badge{font-size:11px;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);border:1px solid var(--border);padding:5px 10px;border-radius:20px;}
-.status-pill{display:inline-flex;align-items:center;gap:6px;font-size:11px;font-weight:700;letter-spacing:.5px;padding:5px 12px;border-radius:20px;transition:all .3s;}
-.status-pill.online {background:rgba(76,222,140,.12);color:var(--green);border:1px solid rgba(76,222,140,.3);}
+.date-badge{font-size:10px;letter-spacing:1px;text-transform:uppercase;color:var(--muted);border:1px solid var(--border);padding:5px 10px;border-radius:20px;}
+.status-pill{display:inline-flex;align-items:center;gap:6px;font-size:11px;font-weight:700;padding:5px 12px;border-radius:20px;transition:all .3s;}
+.status-pill.online{background:rgba(76,222,140,.12);color:var(--green);border:1px solid rgba(76,222,140,.3);}
 .status-pill.offline{background:rgba(255,107,107,.12);color:var(--danger);border:1px solid rgba(255,107,107,.3);}
 .status-dot{width:7px;height:7px;border-radius:50%;animation:pulse 2s infinite;}
-.online  .status-dot{background:var(--green);}
+.online .status-dot{background:var(--green);}
 .offline .status-dot{background:var(--danger);animation:none;}
-
-/* PWA Install banner */
-.install-banner{
-  display:none;align-items:center;gap:12px;
-  padding:12px 16px;border-radius:var(--r);
-  background:rgba(240,192,64,.08);border:1px solid rgba(240,192,64,.2);
-  margin-bottom:20px;animation:fadeUp .4s ease both;
-}
-.install-banner.show{display:flex;}
-.install-banner-text{flex:1;font-size:12px;color:var(--text);}
-.install-banner-text strong{display:block;font-size:13px;color:var(--accent);margin-bottom:2px;}
-.install-btn{
-  padding:7px 14px;border-radius:10px;
-  background:var(--accent);color:#0f1117;
-  border:none;font-size:12px;font-weight:700;
-  font-family:inherit;cursor:pointer;flex-shrink:0;
-  transition:opacity .2s;
-}
-.install-btn:hover{opacity:.85;}
-.install-close{
-  background:none;border:none;color:var(--muted);
-  font-size:18px;cursor:pointer;flex-shrink:0;padding:0 4px;
-  line-height:1;
-}
-
-/* Divider */
-.divider{height:1px;background:var(--border);margin-bottom:24px;animation:fadeUp .4s .05s ease both;}
-
-/* Offline banner */
-.offline-banner{
-  display:none;align-items:center;gap:10px;
-  padding:12px 16px;border-radius:var(--r);
-  background:rgba(255,107,107,.08);border:1px solid rgba(255,107,107,.2);
-  color:var(--danger);font-size:12px;margin-bottom:20px;
-}
+.divider{height:1px;background:var(--border);margin-bottom:24px;}
+.offline-banner{display:none;align-items:center;gap:10px;padding:12px 16px;border-radius:var(--r);background:rgba(255,107,107,.08);border:1px solid rgba(255,107,107,.2);color:var(--danger);font-size:12px;margin-bottom:20px;}
 .offline-banner.show{display:flex;}
-
-/* Search */
 .search-wrap{position:relative;margin-bottom:28px;animation:fadeUp .4s .1s ease both;}
-.search-wrap svg{position:absolute;left:16px;top:50%;transform:translateY(-50%);opacity:.4;}
-#search{
-  width:100%;padding:13px 16px 13px 46px;
-  border-radius:var(--r);border:1px solid var(--border);
-  background:var(--surface);color:var(--text);
-  font-size:14px;font-family:inherit;outline:none;
-  transition:border .2s,background .2s;
-}
+.search-wrap svg{position:absolute;left:16px;top:50%;transform:translateY(-50%);opacity:.4;pointer-events:none;}
+#search{width:100%;padding:14px 16px 14px 46px;border-radius:var(--r);border:1px solid var(--border);background:var(--surface);color:var(--text);font-size:16px;font-family:inherit;outline:none;transition:border .2s,background .2s;-webkit-appearance:none;}
 #search:focus{border-color:rgba(240,192,64,.35);background:var(--surface2);}
 #search::placeholder{color:var(--muted);}
-
-/* Section title */
 .section-title{font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:14px;padding-left:2px;}
-
-/* App Grid */
 .app-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:10px;margin-bottom:36px;}
-.app-card{
-  display:flex;align-items:center;gap:14px;
-  padding:14px;border-radius:var(--r);
-  background:var(--surface);border:1px solid var(--border);
-  text-decoration:none;color:var(--text);
-  transition:background .2s,border-color .2s,transform .18s cubic-bezier(.34,1.4,.64,1);
-  animation:fadeUp .5s ease both;
-  position:relative;overflow:hidden;
-}
+.app-card{display:flex;align-items:center;gap:14px;padding:14px;border-radius:var(--r);background:var(--surface);border:1px solid var(--border);text-decoration:none;color:var(--text);transition:background .15s,border-color .15s,transform .15s;animation:fadeUp .5s ease both;position:relative;overflow:hidden;-webkit-user-select:none;user-select:none;}
 .app-card::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(255,255,255,.03) 0%,transparent 60%);pointer-events:none;}
-.app-card:hover{background:var(--surface2);border-color:rgba(240,192,64,.22);transform:translateY(-2px);}
-.app-card:active{transform:scale(.97);}
-.app-card:nth-child(1){animation-delay:.10s}.app-card:nth-child(2){animation-delay:.14s}
-.app-card:nth-child(3){animation-delay:.18s}.app-card:nth-child(4){animation-delay:.22s}
-.app-card:nth-child(5){animation-delay:.26s}.app-card:nth-child(6){animation-delay:.30s}
-.app-card:nth-child(7){animation-delay:.34s}.app-card:nth-child(8){animation-delay:.38s}
-
-.app-icon{
-  width:50px;height:50px;border-radius:14px;flex-shrink:0;
-  display:flex;align-items:center;justify-content:center;
-  font-family:'Noto Sans JP',sans-serif;font-size:19px;font-weight:700;
-  box-shadow:0 4px 14px rgba(0,0,0,.3);position:relative;overflow:hidden;
-}
+.app-card:active{background:var(--surface2);border-color:rgba(240,192,64,.22);transform:scale(.97);}
+.app-card:nth-child(1){animation-delay:.08s}.app-card:nth-child(2){animation-delay:.12s}.app-card:nth-child(3){animation-delay:.16s}.app-card:nth-child(4){animation-delay:.20s}.app-card:nth-child(5){animation-delay:.24s}.app-card:nth-child(6){animation-delay:.28s}.app-card:nth-child(7){animation-delay:.32s}.app-card:nth-child(8){animation-delay:.36s}
+.app-icon{width:52px;height:52px;border-radius:14px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-family:'Noto Sans JP',sans-serif;font-size:20px;font-weight:700;box-shadow:0 4px 14px rgba(0,0,0,.3);position:relative;overflow:hidden;}
 .app-icon::after{content:'';position:absolute;inset:0;background:linear-gradient(145deg,rgba(255,255,255,.18) 0%,transparent 55%);}
-.i1{background:linear-gradient(135deg,#68b7ff,#295eff)}
-.i2{background:linear-gradient(135deg,#6ce28c,#179a5d)}
-.i3{background:linear-gradient(135deg,#ffb04d,#ff6a3d)}
-.i4{background:linear-gradient(135deg,#d77dff,#7f52ff)}
-.i5{background:linear-gradient(135deg,#ff7aa2,#f03168)}
-.i6{background:linear-gradient(135deg,#00d2ff,#3a7bd5)}
-.i7{background:linear-gradient(135deg,#00c9a7,#007f73)}
-.i8{background:linear-gradient(135deg,#f6d365,#fda085)}
-
+.i1{background:linear-gradient(135deg,#68b7ff,#295eff)}.i2{background:linear-gradient(135deg,#6ce28c,#179a5d)}.i3{background:linear-gradient(135deg,#ffb04d,#ff6a3d)}.i4{background:linear-gradient(135deg,#d77dff,#7f52ff)}.i5{background:linear-gradient(135deg,#ff7aa2,#f03168)}.i6{background:linear-gradient(135deg,#00d2ff,#3a7bd5)}.i7{background:linear-gradient(135deg,#00c9a7,#007f73)}.i8{background:linear-gradient(135deg,#f6d365,#fda085)}
 .app-info{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px;}
 .app-name{font-size:13px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;line-height:1.3;}
 .app-desc{font-size:11px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;line-height:1.4;}
-.app-badge{font-size:9px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;padding:2px 6px;border-radius:5px;background:rgba(76,222,140,.1);color:var(--green);border:1px solid rgba(76,222,140,.2);display:inline-block;align-self:flex-start;margin-top:2px;}
-
-/* Widget */
-.widget{border-radius:var(--r);border:1px solid var(--border);background:var(--surface);overflow:hidden;margin-bottom:36px;animation:fadeUp .5s .42s ease both;}
+.app-badge{font-size:9px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;padding:2px 6px;border-radius:5px;background:rgba(76,222,140,.1);color:var(--green);border:1px solid rgba(76,222,140,.2);display:inline-block;align-self:flex-start;margin-top:3px;}
+.widget{border-radius:var(--r);border:1px solid var(--border);background:var(--surface);overflow:hidden;margin-bottom:36px;animation:fadeUp .5s .4s ease both;}
 .widget-header{padding:14px 16px 10px;font-family:'Syne',sans-serif;font-size:13px;font-weight:700;letter-spacing:.5px;color:var(--accent);border-bottom:1px solid var(--border);}
-.widget-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));}
-.widget-item{display:flex;justify-content:space-between;align-items:center;padding:12px 16px;border-right:1px solid var(--border);border-bottom:1px solid var(--border);transition:background .15s;text-decoration:none;color:inherit;cursor:pointer;}
-.widget-item:hover{background:rgba(255,255,255,.04);}
+.widget-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));}
+.widget-item{display:flex;justify-content:space-between;align-items:center;padding:14px 16px;border-right:1px solid var(--border);border-bottom:1px solid var(--border);text-decoration:none;color:inherit;transition:background .15s;min-height:52px;}
+.widget-item:active{background:rgba(255,255,255,.06);}
 .widget-key{font-size:11px;color:var(--muted);}
-.widget-val{font-size:12px;font-weight:700;color:var(--text);display:flex;align-items:center;gap:5px;}
+.widget-val{font-size:12px;font-weight:700;display:flex;align-items:center;gap:5px;}
 .dot{width:6px;height:6px;border-radius:50%;}
-.d1{background:#68b7ff;box-shadow:0 0 5px #68b7ff;}
-.d2{background:var(--green);box-shadow:0 0 5px var(--green);}
-.d3{background:#d77dff;box-shadow:0 0 5px #d77dff;}
-.d4{background:#fda085;box-shadow:0 0 5px #fda085;}
-
-/* GitHub */
-.github-section{border-radius:var(--r);border:1px solid var(--border);background:var(--surface);padding:18px 20px;display:flex;align-items:center;gap:16px;animation:fadeUp .5s .48s ease both;position:relative;overflow:hidden;}
+.d1{background:#68b7ff;box-shadow:0 0 5px #68b7ff}.d2{background:var(--green);box-shadow:0 0 5px var(--green)}.d3{background:#d77dff;box-shadow:0 0 5px #d77dff}.d4{background:#fda085;box-shadow:0 0 5px #fda085}
+.github-section{border-radius:var(--r);border:1px solid var(--border);background:var(--surface);padding:18px 20px;display:flex;align-items:center;gap:16px;animation:fadeUp .5s .46s ease both;position:relative;overflow:hidden;}
 .github-section::after{content:'';position:absolute;inset:0;background:linear-gradient(90deg,rgba(255,255,255,.02) 0%,transparent 60%);pointer-events:none;}
 .github-icon{width:46px;height:46px;border-radius:13px;background:#24292e;flex-shrink:0;display:flex;align-items:center;justify-content:center;border:1px solid rgba(255,255,255,.1);}
-.github-info{flex:1;}
+.github-info{flex:1;min-width:0;}
 .github-info .name{font-size:13px;font-weight:700;}
-.github-info .desc{font-size:11px;color:var(--muted);margin-top:2px;}
-.github-right{display:flex;flex-direction:column;align-items:flex-end;gap:6px;}
+.github-info .desc{font-size:11px;color:var(--muted);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.github-right{display:flex;flex-direction:column;align-items:flex-end;gap:6px;flex-shrink:0;}
 .online-only-badge{font-size:9px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;padding:3px 7px;border-radius:6px;background:rgba(94,184,255,.1);color:var(--accent2);border:1px solid rgba(94,184,255,.2);}
-.github-btn{display:inline-flex;align-items:center;gap:6px;padding:8px 14px;border-radius:10px;background:rgba(255,255,255,.07);color:var(--text);border:1px solid var(--border);font-size:12px;font-weight:600;font-family:inherit;text-decoration:none;cursor:pointer;transition:background .2s,opacity .2s;}
-.github-btn:hover{background:rgba(255,255,255,.13);}
-.github-btn.disabled{opacity:.3;cursor:not-allowed;pointer-events:none;}
-
+.github-btn{display:inline-flex;align-items:center;gap:6px;padding:9px 14px;border-radius:10px;background:rgba(255,255,255,.07);color:var(--text);border:1px solid var(--border);font-size:12px;font-weight:600;font-family:inherit;text-decoration:none;transition:background .15s;min-height:40px;}
+.github-btn:active{background:rgba(255,255,255,.13);}
+.github-btn.disabled{opacity:.3;pointer-events:none;}
 #no-results{display:none;text-align:center;padding:36px 20px;color:var(--muted);font-size:13px;}
-
 @keyframes fadeUp{from{opacity:0;transform:translateY(14px);}to{opacity:1;transform:translateY(0);}}
 @keyframes pulse{0%,100%{opacity:1;box-shadow:0 0 0 0 rgba(76,222,140,.4);}50%{opacity:.7;box-shadow:0 0 0 5px rgba(76,222,140,0);}}
-
-@media(max-width:520px){
-  body{padding:20px 12px 48px;}
-  .app-grid{grid-template-columns:1fr 1fr;}
-  .widget-grid{grid-template-columns:1fr 1fr;}
-  .github-section{flex-wrap:wrap;}
-  .github-right{flex-direction:row;align-items:center;width:100%;justify-content:space-between;}
-  .install-banner{flex-wrap:wrap;}
-}
+@media(max-width:480px){body{padding-left:14px;padding-right:14px;}.app-grid{grid-template-columns:1fr 1fr;}.widget-grid{grid-template-columns:1fr 1fr;}.github-section{flex-wrap:wrap;}.github-right{flex-direction:row;align-items:center;width:100%;justify-content:space-between;}.install-banner{flex-wrap:wrap;}}
 </style>
 </head>
 <body>
 <div class="wrap">
 
-  <!-- PWA Install Banner -->
   <div class="install-banner" id="installBanner">
-    <div class="install-banner-text">
-      <strong>📲 アプリとしてインストール</strong>
-      ホーム画面に追加してオフラインでも使えます
+    <div class="install-text">
+      <strong>📲 ホーム画面に追加</strong>
+      インストールしてオフラインでも使えます
     </div>
     <button class="install-btn" id="installBtn">インストール</button>
     <button class="install-close" id="installClose" aria-label="閉じる">×</button>
   </div>
 
-  <!-- Header -->
   <header>
     <div class="header-left">
       <h1>My Apps</h1>
-      <p class="tagline">GitHubで作ったアプリを、ホーム画面風にまとめた入口ページ</p>
+      <p class="tagline">GitHubで作ったアプリ一覧ランチャー</p>
     </div>
     <div class="header-right">
       <div class="date-badge" id="dateLabel"></div>
@@ -224,368 +111,119 @@ header{display:flex;justify-content:space-between;align-items:flex-start;margin-
 
   <div class="divider"></div>
 
-  <!-- Offline banner -->
   <div class="offline-banner" id="offlineBanner">
     <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/></svg>
     オフラインです。キャッシュ済みアプリが使用できます。GitHubはご利用いただけません。
   </div>
 
-  <!-- Search -->
   <div class="search-wrap">
     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round">
       <circle cx="11" cy="11" r="6"/><line x1="16.5" y1="16.5" x2="22" y2="22"/>
     </svg>
-    <input type="text" id="search" placeholder="アプリを検索する…" autocomplete="off"/>
+    <input type="text" id="search" placeholder="アプリを検索する…" autocomplete="off" inputmode="search"/>
   </div>
 
-  <!-- Apps -->
   <div class="section-title">アプリ一覧</div>
   <div class="app-grid" id="appGrid">
 
-    <a class="app-card" href="https://saronisi652closer-ship-it.github.io/my-app/" target="_blank" data-name="趣味管理">
+    <a class="app-card" href="https://saronisi652closer-ship-it.github.io/my-app/" target="_blank" rel="noopener" data-name="趣味管理">
       <div class="app-icon i1">趣</div>
-      <div class="app-info">
-        <div class="app-name">趣味管理</div>
-        <div class="app-desc">趣味・コレクションを管理</div>
-        <span class="app-badge">オフライン可</span>
-      </div>
+      <div class="app-info"><div class="app-name">趣味管理</div><div class="app-desc">趣味・コレクションを管理</div><span class="app-badge">オフライン可</span></div>
     </a>
 
-    <a class="app-card" href="https://saronisi652closer-ship-it.github.io/rinto-region/" target="_blank" data-name="ミトモン">
+    <a class="app-card" href="https://saronisi652closer-ship-it.github.io/rinto-region/" target="_blank" rel="noopener" data-name="ミトモン">
       <div class="app-icon i2">ミ</div>
-      <div class="app-info">
-        <div class="app-name">ミトモン</div>
-        <div class="app-desc">ゲームアプリ</div>
-        <span class="app-badge">オフライン可</span>
-      </div>
+      <div class="app-info"><div class="app-name">ミトモン</div><div class="app-desc">ゲームアプリ</div><span class="app-badge">オフライン可</span></div>
     </a>
 
-    <a class="app-card" href="https://saronisi652closer-ship-it.github.io/-/" target="_blank" data-name="オフラインメモ">
+    <a class="app-card" href="https://saronisi652closer-ship-it.github.io/-/" target="_blank" rel="noopener" data-name="オフラインメモ">
       <div class="app-icon i3">メ</div>
-      <div class="app-info">
-        <div class="app-name">オフラインメモ</div>
-        <div class="app-desc">ネット不要のメモ帳</div>
-        <span class="app-badge">オフライン可</span>
-      </div>
+      <div class="app-info"><div class="app-name">オフラインメモ</div><div class="app-desc">ネット不要のメモ帳</div><span class="app-badge">オフライン可</span></div>
     </a>
 
-    <a class="app-card" href="https://saronisi652closer-ship-it.github.io/Multitasking/" target="_blank" data-name="マルチタスク">
+    <a class="app-card" href="https://saronisi652closer-ship-it.github.io/Multitasking/" target="_blank" rel="noopener" data-name="マルチタスク">
       <div class="app-icon i4">タ</div>
-      <div class="app-info">
-        <div class="app-name">マルチタスク</div>
-        <div class="app-desc">タスク管理アプリ</div>
-        <span class="app-badge">オフライン可</span>
-      </div>
+      <div class="app-info"><div class="app-name">マルチタスク</div><div class="app-desc">タスク管理アプリ</div><span class="app-badge">オフライン可</span></div>
     </a>
 
-    <a class="app-card" href="https://saronisi652closer-ship-it.github.io/shopping-list/" target="_blank" data-name="在庫管理">
+    <a class="app-card" href="https://saronisi652closer-ship-it.github.io/shopping-list/" target="_blank" rel="noopener" data-name="在庫管理">
       <div class="app-icon i5">在</div>
-      <div class="app-info">
-        <div class="app-name">在庫管理</div>
-        <div class="app-desc">買い物・在庫チェック</div>
-        <span class="app-badge">オフライン可</span>
-      </div>
+      <div class="app-info"><div class="app-name">在庫管理</div><div class="app-desc">買い物・在庫チェック</div><span class="app-badge">オフライン可</span></div>
     </a>
 
-    <a class="app-card" href="https://saronisi652closer-ship-it.github.io/duplicate-photo-checker/" target="_blank" data-name="重複写真チェッカー">
+    <a class="app-card" href="https://saronisi652closer-ship-it.github.io/duplicate-photo-checker/" target="_blank" rel="noopener" data-name="重複写真チェッカー">
       <div class="app-icon i6">写</div>
-      <div class="app-info">
-        <div class="app-name">重複写真</div>
-        <div class="app-desc">重複画像を検出・整理</div>
-        <span class="app-badge">オフライン可</span>
-      </div>
+      <div class="app-info"><div class="app-name">重複写真</div><div class="app-desc">重複画像を検出・整理</div><span class="app-badge">オフライン可</span></div>
     </a>
 
-    <a class="app-card" href="https://saronisi652closer-ship-it.github.io/Pal/" target="_blank" data-name="Pal">
+    <a class="app-card" href="https://saronisi652closer-ship-it.github.io/Pal/" target="_blank" rel="noopener" data-name="Pal">
       <div class="app-icon i7">パ</div>
-      <div class="app-info">
-        <div class="app-name">Pal</div>
-        <div class="app-desc">コンパニオンアプリ</div>
-        <span class="app-badge">オフライン可</span>
-      </div>
+      <div class="app-info"><div class="app-name">Pal</div><div class="app-desc">コンパニオンアプリ</div><span class="app-badge">オフライン可</span></div>
     </a>
 
-    <a class="app-card" href="https://saronisi652closer-ship-it.github.io/Book.game/" target="_blank" data-name="本・ゲーム">
+    <a class="app-card" href="https://saronisi652closer-ship-it.github.io/Book.game/" target="_blank" rel="noopener" data-name="本・ゲーム">
       <div class="app-icon i8">本</div>
-      <div class="app-info">
-        <div class="app-name">本・ゲーム</div>
-        <div class="app-desc">読書・ゲーム管理</div>
-        <span class="app-badge">オフライン可</span>
-      </div>
+      <div class="app-info"><div class="app-name">本・ゲーム</div><div class="app-desc">読書・ゲーム管理</div><span class="app-badge">オフライン可</span></div>
     </a>
 
   </div>
   <div id="no-results">「<span id="query-echo"></span>」に一致するアプリは見つかりませんでした</div>
 
-  <!-- Widget -->
   <div class="section-title">よく使うアプリ</div>
   <div class="widget">
     <div class="widget-header">クイックアクセス</div>
     <div class="widget-grid">
-      <a class="widget-item" href="https://saronisi652closer-ship-it.github.io/rinto-region/" target="_blank">
-        <span class="widget-key">ゲーム</span>
-        <span class="widget-val"><span class="dot d1"></span>ミトモン</span>
+      <a class="widget-item" href="https://saronisi652closer-ship-it.github.io/rinto-region/" target="_blank" rel="noopener">
+        <span class="widget-key">ゲーム</span><span class="widget-val"><span class="dot d1"></span>ミトモン</span>
       </a>
-      <a class="widget-item" href="https://saronisi652closer-ship-it.github.io/shopping-list/" target="_blank">
-        <span class="widget-key">生活</span>
-        <span class="widget-val"><span class="dot d2"></span>在庫管理</span>
+      <a class="widget-item" href="https://saronisi652closer-ship-it.github.io/shopping-list/" target="_blank" rel="noopener">
+        <span class="widget-key">生活</span><span class="widget-val"><span class="dot d2"></span>在庫管理</span>
       </a>
-      <a class="widget-item" href="https://saronisi652closer-ship-it.github.io/my-app/" target="_blank">
-        <span class="widget-key">趣味</span>
-        <span class="widget-val"><span class="dot d3"></span>趣味管理</span>
+      <a class="widget-item" href="https://saronisi652closer-ship-it.github.io/my-app/" target="_blank" rel="noopener">
+        <span class="widget-key">趣味</span><span class="widget-val"><span class="dot d3"></span>趣味管理</span>
       </a>
-      <a class="widget-item" href="https://saronisi652closer-ship-it.github.io/Book.game/" target="_blank">
-        <span class="widget-key">整理</span>
-        <span class="widget-val"><span class="dot d4"></span>本・ゲーム</span>
+      <a class="widget-item" href="https://saronisi652closer-ship-it.github.io/Book.game/" target="_blank" rel="noopener">
+        <span class="widget-key">整理</span><span class="widget-val"><span class="dot d4"></span>本・ゲーム</span>
       </a>
     </div>
   </div>
 
-  <!-- GitHub -->
   <div class="section-title">外部リンク</div>
   <div class="github-section">
     <div class="github-icon">
-      <svg width="24" height="24" viewBox="0 0 24 24" fill="white">
-        <path d="M12 0C5.37 0 0 5.37 0 12c0 5.3 3.44 9.8 8.2 11.38.6.1.82-.26.82-.58v-2.18c-3.34.72-4.04-1.6-4.04-1.6-.54-1.38-1.33-1.74-1.33-1.74-1.09-.74.08-.73.08-.73 1.2.08 1.84 1.24 1.84 1.24 1.07 1.83 2.8 1.3 3.48 1 .11-.78.42-1.3.76-1.6-2.67-.3-5.47-1.33-5.47-5.93 0-1.31.47-2.38 1.24-3.22-.12-.3-.54-1.52.12-3.18 0 0 1.01-.32 3.3 1.23A11.5 11.5 0 0 1 12 5.8c1.02.005 2.05.14 3.01.4 2.28-1.55 3.29-1.23 3.29-1.23.66 1.66.24 2.88.12 3.18.77.84 1.24 1.91 1.24 3.22 0 4.61-2.81 5.63-5.49 5.92.43.37.82 1.1.82 2.22v3.29c0 .32.22.69.83.57C20.57 21.8 24 17.3 24 12c0-6.63-5.37-12-12-12z"/>
-      </svg>
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="white"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.3 3.44 9.8 8.2 11.38.6.1.82-.26.82-.58v-2.18c-3.34.72-4.04-1.6-4.04-1.6-.54-1.38-1.33-1.74-1.33-1.74-1.09-.74.08-.73.08-.73 1.2.08 1.84 1.24 1.84 1.24 1.07 1.83 2.8 1.3 3.48 1 .11-.78.42-1.3.76-1.6-2.67-.3-5.47-1.33-5.47-5.93 0-1.31.47-2.38 1.24-3.22-.12-.3-.54-1.52.12-3.18 0 0 1.01-.32 3.3 1.23A11.5 11.5 0 0 1 12 5.8c1.02.005 2.05.14 3.01.4 2.28-1.55 3.29-1.23 3.29-1.23.66 1.66.24 2.88.12 3.18.77.84 1.24 1.91 1.24 3.22 0 4.61-2.81 5.63-5.49 5.92.43.37.82 1.1.82 2.22v3.29c0 .32.22.69.83.57C20.57 21.8 24 17.3 24 12c0-6.63-5.37-12-12-12z"/></svg>
     </div>
     <div class="github-info">
       <div class="name">GitHub リポジトリ</div>
-      <div class="desc">saronisi652closer-ship-it — ソースコード一覧</div>
+      <div class="desc">saronisi652closer-ship-it</div>
     </div>
     <div class="github-right">
       <span class="online-only-badge">オンライン専用</span>
-      <a id="githubBtn" class="github-btn" href="https://github.com/saronisi652closer-ship-it" target="_blank">
-        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/>
-          <polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/>
-        </svg>
+      <a id="githubBtn" class="github-btn" href="https://github.com/saronisi652closer-ship-it" target="_blank" rel="noopener">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
         GitHubを見る
       </a>
     </div>
   </div>
 
-</div><!-- /wrap -->
-
+</div>
 <script>
-/* ── Date ── */
-const d = new Date();
-const days = ['日','月','火','水','木','金','土'];
-document.getElementById('dateLabel').textContent =
-  `${d.getFullYear()}/${d.getMonth()+1}/${d.getDate()} (${days[d.getDay()]})`;
-
-/* ── Online / Offline ── */
-const pill   = document.getElementById('statusPill');
-const txt    = document.getElementById('statusText');
-const banner = document.getElementById('offlineBanner');
-const ghBtn  = document.getElementById('githubBtn');
-const GHURL  = 'https://github.com/saronisi652closer-ship-it';
-function setOnline(on) {
-  pill.className = 'status-pill ' + (on ? 'online' : 'offline');
-  txt.textContent = on ? 'オンライン' : 'オフライン';
-  banner.classList.toggle('show', !on);
-  if (on) { ghBtn.classList.remove('disabled'); ghBtn.href = GHURL; }
-  else     { ghBtn.classList.add('disabled');    ghBtn.removeAttribute('href'); }
-}
+const d=new Date(),days=['日','月','火','水','木','金','土'];
+document.getElementById('dateLabel').textContent=`${d.getFullYear()}/${d.getMonth()+1}/${d.getDate()} (${days[d.getDay()]})`;
+const pill=document.getElementById('statusPill'),txt=document.getElementById('statusText'),banner=document.getElementById('offlineBanner'),ghBtn=document.getElementById('githubBtn'),GHURL='https://github.com/saronisi652closer-ship-it';
+function setOnline(on){pill.className='status-pill '+(on?'online':'offline');txt.textContent=on?'オンライン':'オフライン';banner.classList.toggle('show',!on);if(on){ghBtn.classList.remove('disabled');ghBtn.href=GHURL;}else{ghBtn.classList.add('disabled');ghBtn.removeAttribute('href');}}
 setOnline(navigator.onLine);
-window.addEventListener('online',  () => setOnline(true));
-window.addEventListener('offline', () => setOnline(false));
-
-/* ── Search ── */
-const input = document.getElementById('search');
-const cards = document.querySelectorAll('.app-card');
-const noRes = document.getElementById('no-results');
-const echo  = document.getElementById('query-echo');
-input.addEventListener('input', () => {
-  const q = input.value.trim().toLowerCase();
-  let n = 0;
-  cards.forEach(c => {
-    const show = !q || c.dataset.name.toLowerCase().includes(q);
-    c.style.display = show ? '' : 'none';
-    if (show) n++;
-  });
-  noRes.style.display = n ? 'none' : 'block';
-  echo.textContent = input.value.trim();
-});
-
-/* ── PWA: App Icon (SVG → PNG canvas → data URI) ── */
-function makeIconDataURL(size) {
-  const c = document.createElement('canvas');
-  c.width = c.height = size;
-  const ctx = c.getContext('2d');
-  // Background
-  const gr = ctx.createLinearGradient(0, 0, size, size);
-  gr.addColorStop(0, '#1f2436');
-  gr.addColorStop(1, '#0f1117');
-  const r = size * 0.22;
-  ctx.beginPath();
-  ctx.moveTo(r, 0); ctx.lineTo(size - r, 0);
-  ctx.quadraticCurveTo(size, 0, size, r);
-  ctx.lineTo(size, size - r);
-  ctx.quadraticCurveTo(size, size, size - r, size);
-  ctx.lineTo(r, size);
-  ctx.quadraticCurveTo(0, size, 0, size - r);
-  ctx.lineTo(0, r);
-  ctx.quadraticCurveTo(0, 0, r, 0);
-  ctx.closePath();
-  ctx.fillStyle = gr;
-  ctx.fill();
-  // Border
-  ctx.strokeStyle = 'rgba(255,255,255,0.1)';
-  ctx.lineWidth = size * 0.02;
-  ctx.stroke();
-  // Grid dots
-  const colors = ['#68b7ff','#6ce28c','#ffb04d','#d77dff','#ff7aa2','#00d2ff','#00c9a7','#f6d365'];
-  const cols = 4, rows = 2;
-  const dot = size * 0.14;
-  const gap = size * 0.04;
-  const totalW = cols * dot + (cols - 1) * gap;
-  const totalH = rows * dot + (rows - 1) * gap;
-  const sx = (size - totalW) / 2;
-  const sy = (size - totalH) / 2;
-  let ci = 0;
-  for (let row = 0; row < rows; row++) {
-    for (let col = 0; col < cols; col++) {
-      const x = sx + col * (dot + gap);
-      const y = sy + row * (dot + gap);
-      const gr2 = ctx.createLinearGradient(x, y, x + dot, y + dot);
-      gr2.addColorStop(0, colors[ci]);
-      gr2.addColorStop(1, colors[ci] + 'aa');
-      ctx.beginPath();
-      ctx.roundRect(x, y, dot, dot, dot * 0.3);
-      ctx.fillStyle = gr2;
-      ctx.fill();
-      ci++;
-    }
-  }
-  return c.toDataURL('image/png');
-}
-
-/* ── PWA: Web App Manifest (injected as blob) ── */
-function injectManifest() {
-  const icon192 = makeIconDataURL(192);
-  const icon512 = makeIconDataURL(512);
-  // Apple touch icon
-  document.getElementById('apple-touch-icon').href = makeIconDataURL(180);
-
-  const manifest = {
-    name: 'My Apps',
-    short_name: 'My Apps',
-    description: 'GitHubで作ったアプリ一覧ランチャー',
-    start_url: './',
-    display: 'standalone',
-    orientation: 'portrait',
-    background_color: '#0f1117',
-    theme_color: '#0f1117',
-    lang: 'ja',
-    icons: [
-      { src: icon192, sizes: '192x192', type: 'image/png', purpose: 'any maskable' },
-      { src: icon512, sizes: '512x512', type: 'image/png', purpose: 'any maskable' },
-    ]
-  };
-  const blob = new Blob([JSON.stringify(manifest)], { type: 'application/json' });
-  const url  = URL.createObjectURL(blob);
-  const link = document.createElement('link');
-  link.rel = 'manifest'; link.href = url;
-  document.head.appendChild(link);
-}
-injectManifest();
-
-/* ── PWA: Service Worker (cache-first strategy) ── */
-const SW_CODE = `
-const CACHE = 'myapps-v3';
-const ASSETS = [self.location.pathname];
-
-self.addEventListener('install', e => {
-  e.waitUntil(
-    caches.open(CACHE).then(c => c.addAll(ASSETS)).then(() => self.skipWaiting())
-  );
-});
-
-self.addEventListener('activate', e => {
-  e.waitUntil(
-    caches.keys().then(keys =>
-      Promise.all(keys.filter(k => k !== CACHE).map(k => caches.delete(k)))
-    ).then(() => self.clients.claim())
-  );
-});
-
-self.addEventListener('fetch', e => {
-  const url = new URL(e.request.url);
-  // Always network-first for external URLs (GitHub etc.)
-  if (url.origin !== self.location.origin) {
-    e.respondWith(
-      fetch(e.request).catch(() => new Response('オフライン中です', { status: 503 }))
-    );
-    return;
-  }
-  // Cache-first for same-origin
-  e.respondWith(
-    caches.match(e.request).then(cached => {
-      if (cached) return cached;
-      return fetch(e.request).then(res => {
-        const clone = res.clone();
-        caches.open(CACHE).then(c => c.put(e.request, clone));
-        return res;
-      }).catch(() => caches.match(e.request));
-    })
-  );
-});
-`;
-
-if ('serviceWorker' in navigator) {
-  const swBlob = new Blob([SW_CODE], { type: 'application/javascript' });
-  const swURL  = URL.createObjectURL(swBlob);
-  navigator.serviceWorker.register(swURL, { scope: './' })
-    .then(reg => {
-      console.log('[SW] registered:', reg.scope);
-      reg.addEventListener('updatefound', () => {
-        const nw = reg.installing;
-        nw.addEventListener('statechange', () => {
-          if (nw.state === 'installed' && navigator.serviceWorker.controller) {
-            // New version available — optional: show reload prompt
-          }
-        });
-      });
-    })
-    .catch(err => console.warn('[SW] registration failed:', err));
-}
-
-/* ── PWA: Install prompt ── */
-let deferredPrompt = null;
-const installBanner = document.getElementById('installBanner');
-const installBtn    = document.getElementById('installBtn');
-const installClose  = document.getElementById('installClose');
-
-window.addEventListener('beforeinstallprompt', e => {
-  e.preventDefault();
-  deferredPrompt = e;
-  // Only show if not dismissed before
-  if (!localStorage.getItem('pwa-dismissed')) {
-    installBanner.classList.add('show');
-  }
-});
-
-installBtn.addEventListener('click', async () => {
-  if (!deferredPrompt) return;
-  deferredPrompt.prompt();
-  const { outcome } = await deferredPrompt.userChoice;
-  if (outcome === 'accepted') {
-    installBanner.classList.remove('show');
-    localStorage.setItem('pwa-dismissed', '1');
-  }
-  deferredPrompt = null;
-});
-
-installClose.addEventListener('click', () => {
-  installBanner.classList.remove('show');
-  localStorage.setItem('pwa-dismissed', '1');
-});
-
-window.addEventListener('appinstalled', () => {
-  installBanner.classList.remove('show');
-  deferredPrompt = null;
-});
+window.addEventListener('online',()=>setOnline(true));
+window.addEventListener('offline',()=>setOnline(false));
+const input=document.getElementById('search'),cards=document.querySelectorAll('.app-card'),noRes=document.getElementById('no-results'),echo=document.getElementById('query-echo');
+input.addEventListener('input',()=>{const q=input.value.trim().toLowerCase();let n=0;cards.forEach(c=>{const show=!q||c.dataset.name.toLowerCase().includes(q);c.style.display=show?'':'none';if(show)n++;});noRes.style.display=n?'none':'block';echo.textContent=input.value.trim();});
+if('serviceWorker' in navigator){window.addEventListener('load',()=>{navigator.serviceWorker.register('./sw.js',{scope:'./'}).then(r=>console.log('[SW] registered:',r.scope)).catch(e=>console.warn('[SW] failed:',e));});}
+let deferredPrompt=null;
+const ib=document.getElementById('installBanner'),iBtn=document.getElementById('installBtn'),iClose=document.getElementById('installClose');
+window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();deferredPrompt=e;if(!sessionStorage.getItem('pwa-dismissed'))ib.classList.add('show');});
+iBtn.addEventListener('click',async()=>{if(!deferredPrompt)return;deferredPrompt.prompt();const{outcome}=await deferredPrompt.userChoice;ib.classList.remove('show');sessionStorage.setItem('pwa-dismissed','1');deferredPrompt=null;});
+iClose.addEventListener('click',()=>{ib.classList.remove('show');sessionStorage.setItem('pwa-dismissed','1');});
+window.addEventListener('appinstalled',()=>{ib.classList.remove('show');deferredPrompt=null;});
 </script>
 </body>
 </html>
