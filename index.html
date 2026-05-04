@@ -81,9 +81,49 @@ header{display:flex;justify-content:space-between;align-items:flex-start;margin-
 @keyframes fadeUp{from{opacity:0;transform:translateY(14px);}to{opacity:1;transform:translateY(0);}}
 @keyframes pulse{0%,100%{opacity:1;box-shadow:0 0 0 0 rgba(76,222,140,.4);}50%{opacity:.7;box-shadow:0 0 0 5px rgba(76,222,140,0);}}
 @media(max-width:480px){body{padding-left:14px;padding-right:14px;}.app-grid{grid-template-columns:1fr 1fr;}.widget-grid{grid-template-columns:1fr 1fr;}.github-section{flex-wrap:wrap;}.github-right{flex-direction:row;align-items:center;width:100%;justify-content:space-between;}.install-banner{flex-wrap:wrap;}}
+/* ── ヘッダーインストールボタン ── */
+.hdr-install-btn{display:inline-flex;align-items:center;gap:5px;padding:6px 12px;border-radius:20px;background:rgba(240,192,64,.13);color:var(--accent);border:1px solid rgba(240,192,64,.32);font-size:11px;font-weight:700;font-family:inherit;cursor:pointer;transition:background .15s;min-height:34px;white-space:nowrap;}
+.hdr-install-btn:active{background:rgba(240,192,64,.25);}
+/* ── インストール案内モーダル ── */
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.65);z-index:100;align-items:flex-end;justify-content:center;padding:0 0 env(safe-area-inset-bottom,0px);}
+.modal-overlay.show{display:flex;}
+.modal{background:var(--surface2);border-radius:24px 24px 0 0;padding:24px 20px 32px;width:100%;max-width:480px;border:1px solid var(--border);border-bottom:none;}
+.modal-title{font-family:'Syne',sans-serif;font-size:17px;font-weight:800;color:var(--accent);margin-bottom:6px;}
+.modal-sub{font-size:12px;color:var(--muted);margin-bottom:20px;}
+.modal-step{display:flex;align-items:flex-start;gap:12px;margin-bottom:14px;}
+.modal-num{width:26px;height:26px;border-radius:50%;background:rgba(240,192,64,.15);border:1px solid rgba(240,192,64,.3);color:var(--accent);font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px;}
+.modal-step-text{font-size:13px;line-height:1.6;}
+.modal-step-text strong{color:var(--text);}
+.modal-step-text span{color:var(--muted);}
+.modal-prompt-btn{width:100%;margin-top:20px;padding:14px;border-radius:14px;background:var(--accent);color:#0f1117;border:none;font-size:14px;font-weight:700;font-family:inherit;cursor:pointer;}
+.modal-prompt-btn:active{opacity:.8;}
+.modal-close{width:100%;margin-top:10px;padding:12px;border-radius:14px;background:rgba(255,255,255,.07);color:var(--muted);border:1px solid var(--border);font-size:13px;font-weight:600;font-family:inherit;cursor:pointer;}
+.modal-close:active{background:rgba(255,255,255,.12);}
 </style>
 </head>
 <body>
+<!-- インストール案内モーダル -->
+<div class="modal-overlay" id="installModal">
+  <div class="modal">
+    <div class="modal-title">📲 ホーム画面にインストール</div>
+    <div class="modal-sub">アプリとしてインストールするとオフラインでも使えます</div>
+    <div class="modal-step">
+      <div class="modal-num">1</div>
+      <div class="modal-step-text"><strong>Chromeのメニューを開く</strong><br><span>画面右上の「⋮」（三点メニュー）をタップ</span></div>
+    </div>
+    <div class="modal-step">
+      <div class="modal-num">2</div>
+      <div class="modal-step-text"><strong>「アプリをインストール」または<br>「ホーム画面に追加」を選択</strong><br><span>※「アプリをインストール」が表示される場合はそちらを選ぶとPWAとして正式インストールされます</span></div>
+    </div>
+    <div class="modal-step">
+      <div class="modal-num">3</div>
+      <div class="modal-step-text"><strong>「インストール」をタップして完了</strong><br><span>ホーム画面にアイコンが追加されます</span></div>
+    </div>
+    <button class="modal-prompt-btn" id="modalPromptBtn">インストールする（自動）</button>
+    <button class="modal-close" id="modalClose">閉じる</button>
+  </div>
+</div>
+
 <div class="wrap">
 
   <div class="install-banner" id="installBanner">
@@ -101,6 +141,10 @@ header{display:flex;justify-content:space-between;align-items:flex-start;margin-
       <p class="tagline">GitHubで作ったアプリ一覧ランチャー</p>
     </div>
     <div class="header-right">
+      <button class="hdr-install-btn" id="hdrInstallBtn">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+        インストール
+      </button>
       <div class="date-badge" id="dateLabel"></div>
       <div class="status-pill online" id="statusPill">
         <span class="status-dot"></span>
@@ -218,12 +262,64 @@ window.addEventListener('offline',()=>setOnline(false));
 const input=document.getElementById('search'),cards=document.querySelectorAll('.app-card'),noRes=document.getElementById('no-results'),echo=document.getElementById('query-echo');
 input.addEventListener('input',()=>{const q=input.value.trim().toLowerCase();let n=0;cards.forEach(c=>{const show=!q||c.dataset.name.toLowerCase().includes(q);c.style.display=show?'':'none';if(show)n++;});noRes.style.display=n?'none':'block';echo.textContent=input.value.trim();});
 if('serviceWorker' in navigator){window.addEventListener('load',()=>{navigator.serviceWorker.register('./sw.js',{scope:'./'}).then(r=>console.log('[SW] registered:',r.scope)).catch(e=>console.warn('[SW] failed:',e));});}
-let deferredPrompt=null;
-const ib=document.getElementById('installBanner'),iBtn=document.getElementById('installBtn'),iClose=document.getElementById('installClose');
-window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();deferredPrompt=e;if(!sessionStorage.getItem('pwa-dismissed'))ib.classList.add('show');});
-iBtn.addEventListener('click',async()=>{if(!deferredPrompt)return;deferredPrompt.prompt();const{outcome}=await deferredPrompt.userChoice;ib.classList.remove('show');sessionStorage.setItem('pwa-dismissed','1');deferredPrompt=null;});
-iClose.addEventListener('click',()=>{ib.classList.remove('show');sessionStorage.setItem('pwa-dismissed','1');});
-window.addEventListener('appinstalled',()=>{ib.classList.remove('show');deferredPrompt=null;});
+/* ── PWA Install ── */
+let deferredPrompt = null;
+const ib          = document.getElementById('installBanner');
+const iBtn        = document.getElementById('installBtn');
+const iClose      = document.getElementById('installClose');
+const modal       = document.getElementById('installModal');
+const modalPrompt = document.getElementById('modalPromptBtn');
+const modalClose  = document.getElementById('modalClose');
+const hdrBtn      = document.getElementById('hdrInstallBtn');
+
+// beforeinstallprompt → バナーも表示
+window.addEventListener('beforeinstallprompt', e => {
+  e.preventDefault();
+  deferredPrompt = e;
+  ib.classList.add('show');          // バナー表示
+  modalPrompt.style.display = '';    // 自動インストールボタン有効
+});
+
+// ヘッダーボタン → モーダル表示
+hdrBtn.addEventListener('click', () => modal.classList.add('show'));
+
+// バナーのインストールボタン
+iBtn.addEventListener('click', async () => {
+  if (deferredPrompt) {
+    deferredPrompt.prompt();
+    const { outcome } = await deferredPrompt.userChoice;
+    ib.classList.remove('show');
+    deferredPrompt = null;
+  } else {
+    modal.classList.add('show');
+  }
+});
+iClose.addEventListener('click', () => ib.classList.remove('show'));
+
+// モーダルの自動インストールボタン
+modalPrompt.addEventListener('click', async () => {
+  if (deferredPrompt) {
+    deferredPrompt.prompt();
+    const { outcome } = await deferredPrompt.userChoice;
+    if (outcome === 'accepted') modal.classList.remove('show');
+    deferredPrompt = null;
+  }
+});
+
+// beforeinstallpromptが来ない場合は自動ボタンを非表示
+modalPrompt.style.display = 'none';
+
+// モーダルを閉じる（背景タップ or ボタン）
+modalClose.addEventListener('click', () => modal.classList.remove('show'));
+modal.addEventListener('click', e => { if (e.target === modal) modal.classList.remove('show'); });
+
+// インストール完了
+window.addEventListener('appinstalled', () => {
+  ib.classList.remove('show');
+  modal.classList.remove('show');
+  hdrBtn.style.display = 'none';
+  deferredPrompt = null;
+});
 </script>
 </body>
 </html>
